@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { loginFn, useAuth } from "../lib/auth-context";
+import { loginFn, getSession, useAuth } from "../lib/auth-context";
 import { Button } from "../components/ui/button";
 
 export const Route = createFileRoute("/_auth/login")({
@@ -18,9 +18,9 @@ function LoginPage() {
     e.preventDefault();
     setError("");
     try {
-      const data = await loginFn({ email, password });
-      if (data.setCookie) document.cookie = data.setCookie;
-      setAuth({ user: data, workspace: null, loading: false });
+      await loginFn({ data: { email, password } });
+      const session = await getSession();
+      setAuth({ ...session, loading: false });
       navigate({ to: "/monitors" });
     } catch {
       setError("Invalid email or password");

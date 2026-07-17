@@ -34,9 +34,7 @@ function MonitorsPage() {
     title: "Monitors",
     description: "Monitor the uptime of your services",
     actions: (
-      <Link to="/monitors/new">
-        <ActionButton icon={Plus}>New Monitor</ActionButton>
-      </Link>
+        <ActionButton href="/monitors/new" icon={Plus}>New Monitor</ActionButton>
     ),
   });
 

@@ -13,11 +13,11 @@ export default function AuthHeader() {
       <div className="flex items-center gap-3">
         {pathname === "/login" ? (
           <Link to="/signup">
-            <Button variant="secondary" size="sm">Create account</Button>
+            <Button variant="neutral" size="sm">Create account</Button>
           </Link>
         ) : (
           <Link to="/login">
-            <Button variant="secondary" size="sm">Sign in</Button>
+            <Button variant="neutral" size="sm">Sign in</Button>
           </Link>
         )}
       </div>

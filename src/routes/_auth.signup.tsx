@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { signupFn, useAuth } from "../lib/auth-context";
+import { signupFn, getSession, useAuth } from "../lib/auth-context";
 import { Button } from "../components/ui/button";
 
 export const Route = createFileRoute("/_auth/signup")({
@@ -19,9 +19,9 @@ function SignupPage() {
     e.preventDefault();
     setError("");
     try {
-      const data = await signupFn({ email, password, name });
-      if (data.setCookie) document.cookie = data.setCookie;
-      setAuth({ user: data, workspace: null, loading: false });
+      await signupFn({ data: { email, password, name } });
+      const session = await getSession();
+      setAuth({ ...session, loading: false });
       navigate({ to: "/monitors" });
     } catch {
       setError("Signup failed. Try again.");

@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest, setCookie } from "@tanstack/react-start/server";
+import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4000";
@@ -30,33 +30,37 @@ export const getSession = createServerFn({ method: "GET" }).handler(async () => 
   const res = await fetch(`${API_URL}/api/auth/me`, {
     headers: { cookie },
   });
-  if (!res.ok) return { user: null, workspace: null, loading: false };
-  return res.json();
+  if (!res.ok) return { user: null, workspace: null, loading: false } as AuthState;
+  return res.json() as Promise<AuthState>;
 });
 
-export const loginFn = createServerFn({ method: "POST" }).handler(async (data: { email: string; password: string }) => {
-  const res = await fetch(`${API_URL}/api/auth/signin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+export const loginFn = createServerFn({ method: "POST" })
+  .validator((d: { email: string; password: string }) => d)
+  .handler(async ({ data }) => {
+    const res = await fetch(`${API_URL}/api/auth/signin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Invalid credentials");
+    const engineSetCookie = res.headers.get("set-cookie");
+    if (engineSetCookie) setResponseHeader("Set-Cookie", engineSetCookie);
+    return res.json();
   });
-  if (!res.ok) throw new Error("Invalid credentials");
-  const engineSetCookie = res.headers.get("set-cookie");
-  if (engineSetCookie) setCookie(engineSetCookie);
-  return res.json();
-});
 
-export const signupFn = createServerFn({ method: "POST" }).handler(async (data: { email: string; password: string; name: string }) => {
-  const res = await fetch(`${API_URL}/api/auth/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+export const signupFn = createServerFn({ method: "POST" })
+  .validator((d: { email: string; password: string; name: string }) => d)
+  .handler(async ({ data }) => {
+    const res = await fetch(`${API_URL}/api/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Signup failed");
+    const engineSetCookie = res.headers.get("set-cookie");
+    if (engineSetCookie) setResponseHeader("Set-Cookie", engineSetCookie);
+    return res.json();
   });
-  if (!res.ok) throw new Error("Signup failed");
-  const engineSetCookie = res.headers.get("set-cookie");
-  if (engineSetCookie) setCookie(engineSetCookie);
-  return res.json();
-});
 
 const AuthContext = createContext<{
   auth: AuthState;

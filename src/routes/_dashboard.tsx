@@ -1,21 +1,20 @@
 import { Outlet, createFileRoute, Link, useLocation, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
-  Monitor, WarningCircle, StackSimple, Bell, CreditCard, GearSix,
-  BellSimple, SignOut, User, Star, Circle,
+  Monitor, WarningCircle, StackSimple, Bell, CreditCard,
+  GearSix, SignOut, User, Star, Circle,
 } from "@phosphor-icons/react";
 import { cn } from "../lib/utils";
-import { useAuth } from "../lib/auth-context";
+import { getSession, useAuth } from "../lib/auth-context";
 import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
-import { Divider } from "../components/ui/divider";
 import * as Dropdown from "../components/ui/dropdown";
 import { LayoutProvider, useHeader } from "../components/layout-context";
-import { Breadcrumb } from "../components/breadcrumb";
 
 export const Route = createFileRoute("/_dashboard")({
-  beforeLoad: ({ context }) => {
-    if (!context.auth?.user) throw redirect({ to: "/login" });
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session.user) throw redirect({ to: "/login" });
   },
   component: DashboardLayout,
 });
@@ -29,7 +28,6 @@ const mainNavItems = [
 
 const workspaceNavItems = [
   { href: "/billing", label: "Billing", icon: CreditCard },
-  { href: "/settings", label: "Settings", icon: GearSix },
 ];
 
 function DashboardLayout() {
@@ -42,8 +40,8 @@ function DashboardLayout() {
 
 function DashboardShell() {
   const pathname = useLocation().pathname;
-  const { config } = useHeader();
-  const { auth } = useAuth();
+  useHeader();
+  useAuth();
   const [plan, setPlan] = useState<string | null>(null);
 
   useEffect(() => {
@@ -115,106 +113,76 @@ function DashboardShell() {
                       <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-primary" />
                     )}
                     <Icon className="size-5 shrink-0" weight={isActive ? "bold" : "regular"} />
-                    <span className={cn("flex-1", isActive && "font-medium")}>{label}</span>
-                    {href === "/billing" && plan === "pro" && (
-                      <Badge variant="light" color="gray" size="sm">Pro</Badge>
-                    )}
+                    <span className={cn(isActive && "font-medium")}>{label}</span>
                   </Link>
                 );
               })}
             </div>
           </div>
-
-          <div className="space-y-1">
-            <div className="px-3 pb-1 text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-              Favorites
-            </div>
-            <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground">
-              <Star className="size-4 shrink-0" />
-              <span>Star items to pin them here</span>
-            </div>
-          </div>
         </div>
 
-        <Divider className="mx-4" />
-        <div className="p-2">
+        <div className="border-t border-border p-4">
           <UserDropdown plan={plan} />
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col pl-64">
-        <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
-          <div className="flex min-h-16 items-center justify-between px-6">
-            <div className="flex flex-col gap-0.5">
-              {config?.breadcrumb && config?.breadcrumb?.length > 0 ? (
-                <Breadcrumb items={config.breadcrumb} />
-              ) : null}
-            </div>
-            <div className="flex items-center gap-2">
-              {config.actions}
-              <button
-                type="button"
-                className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-card-foreground"
-              >
-                <BellSimple className="size-5" />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6">
+      <main className="ml-64 flex-1">
+        <Header />
+        <div className="px-8 pb-8 pt-6">
           <Outlet />
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
 
-function UserDropdown({ plan }: { plan: string | null }) {
-  const { auth } = useAuth();
+function Header() {
+  const { config } = useHeader();
+  return (
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 px-8 backdrop-blur-sm">
+      <div>
+        <h1 className="text-lg font-semibold text-card-foreground">{config.title}</h1>
+        {config.description && (
+          <p className="text-sm text-muted-foreground">{config.description}</p>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        {config.actions}
+      </div>
+    </header>
+  );
+}
 
+function UserDropdown({ plan }: { plan: string | null }) {
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="flex w-full items-center gap-3 whitespace-nowrap rounded-10 p-3 text-left outline-none transition hover:bg-muted focus:outline-none">
-        <Avatar
-          initials={
-            auth.user?.name
-              ? auth.user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-              : "U"
-          }
-          size="md"
-        />
-        <div className="flex w-[172px] shrink-0 items-center gap-3">
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-card-foreground">
-                {auth.user?.name ?? "User"}
-              </span>
-              {plan === "pro" && (
-                <Badge variant="light" color="gray" size="sm">Pro</Badge>
-              )}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {auth.user?.email ?? "user@argushq.com"}
-            </div>
+      <Dropdown.Trigger className="flex w-full items-center gap-3 rounded-lg p-2 transition hover:bg-muted">
+        <Avatar size="sm" />
+        <div className="flex-1 text-left">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-card-foreground">User</span>
+            <Star className="size-3 fill-amber-400 text-amber-400" weight="fill" />
           </div>
-          <div className="flex size-6 items-center justify-center rounded-md">
-            <Circle className="size-2.5 fill-current text-muted-foreground" />
+          <div className="flex items-center gap-1.5">
+            <Badge variant="light" color="blue" size="sm">{plan ?? "Free"}</Badge>
           </div>
+        </div>
+        <div className="flex size-6 items-center justify-center rounded-md">
+          <Circle className="size-2.5 fill-current text-muted-foreground" />
         </div>
       </Dropdown.Trigger>
       <Dropdown.Content side="right" sideOffset={24} align="end">
         <Dropdown.Item asChild>
-          <Link to="/settings">
+          <button className="flex w-full items-center gap-3">
             <User className="size-5 text-muted-foreground" />
             Profile
-          </Link>
+          </button>
         </Dropdown.Item>
         <Dropdown.Item asChild>
-          <Link to="/settings">
+          <button className="flex w-full items-center gap-3">
             <GearSix className="size-5 text-muted-foreground" />
             Settings
-          </Link>
+          </button>
         </Dropdown.Item>
         <Dropdown.Separator className="-mx-1 my-1 h-px bg-border" />
         <Dropdown.Item onClick={() => (window.location.href = "/login")}>

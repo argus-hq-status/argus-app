@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { WarningCircle, CheckCircle, MagnifyingGlass, Plus } from "@phosphor-icons/react";
+import { WarningCircle, CheckCircle, MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
