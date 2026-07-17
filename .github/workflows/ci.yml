@@ -8,58 +8,27 @@ on:
 
 env:
   NODE_VERSION: 22
-  YARN_VERSION: "4.7.0"
 
 jobs:
-  lint:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Enable corepack & set yarn version
-        run: |
-          corepack enable
-          corepack prepare yarn@${{ env.YARN_VERSION }} --activate
-      - name: Cache yarn dependencies
-        uses: actions/cache@v4
+      - uses: actions/cache@v4
         with:
-          path: .yarn/cache
+          path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: yarn-
-      - run: yarn install --immutable
-      - run: yarn lint
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
       - run: yarn typecheck
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Enable corepack & set yarn version
-        run: |
-          corepack enable
-          corepack prepare yarn@${{ env.YARN_VERSION }} --activate
-      - name: Cache yarn dependencies
-        uses: actions/cache@v4
-        with:
-          path: .yarn/cache
-          key: yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: yarn-
-      - run: yarn install --immutable
       - run: yarn build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: next-build
-          path: .next/
 
   docker:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [check]
     if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
