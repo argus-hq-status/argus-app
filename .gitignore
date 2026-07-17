@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+.yarn/
+!yarn.lock
+
+# production
+.next/
+out/
+
+# env
+.env
+.env*.local
+.env.development
+.env.production
+
+# misc
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store

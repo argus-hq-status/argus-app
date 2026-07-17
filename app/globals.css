@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: oklch(0.72 0.22 40);
+  --color-primary-light: oklch(0.92 0.05 40);
+  --color-primary-strong: oklch(0.62 0.24 40);
+
+  --color-bg-white: oklch(1 0 0);
+  --color-bg-weak: oklch(0.97 0.005 60);
+  --color-background: oklch(0.985 0.003 60);
+
+  --color-text-strong: oklch(0.15 0.01 60);
+  --color-text-sub: oklch(0.45 0.01 60);
+  --color-text-soft: oklch(0.6 0.01 60);
+
+  --color-stroke-soft: oklch(0.9 0.005 60);
+  --color-stroke-sub: oklch(0.75 0.005 60);
+
+  --color-error: oklch(0.55 0.2 30);
+  --color-error-light: oklch(0.92 0.04 30);
+  --color-success: oklch(0.55 0.18 150);
+  --color-success-light: oklch(0.92 0.04 150);
+  --color-warning: oklch(0.65 0.18 70);
+  --color-warning-light: oklch(0.93 0.04 70);
+  --color-info: oklch(0.55 0.15 250);
+  --color-info-light: oklch(0.92 0.03 250);
+
+  --color-muted: oklch(0.94 0.005 60);
+  --color-muted-foreground: oklch(0.5 0.01 60);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.15 0.01 60);
+  --color-border: oklch(0.9 0.005 60);
+
+  --font-family-sans: "TomatoGrotesk", system-ui, sans-serif;
+
+  --radius-10: 10px;
+}
+
+@font-face {
+  font-family: "TomatoGrotesk";
+  src: url("/fonts/TomatoGrotesk-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "TomatoGrotesk";
+  src: url("/fonts/TomatoGrotesk-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "TomatoGrotesk";
+  src: url("/fonts/TomatoGrotesk-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+body {
+  font-family: var(--font-family-sans);
+}
+
+.dark {
+  --color-bg-white: oklch(0.2 0.005 60);
+  --color-bg-weak: oklch(0.25 0.005 60);
+  --color-background: oklch(0.15 0.005 60);
+
+  --color-text-strong: oklch(0.9 0.005 60);
+  --color-text-sub: oklch(0.7 0.005 60);
+  --color-text-soft: oklch(0.55 0.005 60);
+
+  --color-stroke-soft: oklch(0.3 0.005 60);
+  --color-stroke-sub: oklch(0.4 0.005 60);
+
+  --color-muted: oklch(0.3 0.005 60);
+  --color-muted-foreground: oklch(0.6 0.01 60);
+  --color-card: oklch(0.2 0.005 60);
+  --color-card-foreground: oklch(0.9 0.005 60);
+  --color-border: oklch(0.3 0.005 60);
+}
