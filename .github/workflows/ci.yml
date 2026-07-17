@@ -21,8 +21,8 @@ jobs:
         with:
           path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
-      - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable yarn
+      - run: COREPACK_ENABLE_STRICT=0 yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn typecheck
       - run: yarn build
