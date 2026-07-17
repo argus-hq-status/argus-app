@@ -6,6 +6,7 @@ node_modules/
 # production
 .next/
 out/
+.output/
 
 # env
 .env

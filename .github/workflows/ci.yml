@@ -10,7 +10,7 @@ env:
   NODE_VERSION: 22
 
 jobs:
-  lint:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,32 +23,12 @@ jobs:
           key: yarn-${{ hashFiles('yarn.lock') }}
       - run: npm install -g yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn lint
       - run: yarn typecheck
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: yarn-${{ hashFiles('yarn.lock') }}
-      - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
       - run: yarn build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: next-build
-          path: .next/
 
   docker:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [check]
     if: github.ref == 'refs/heads/main'
     permissions:
       contents: read

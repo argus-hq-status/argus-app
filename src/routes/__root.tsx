@@ -1,0 +1,39 @@
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "~/lib/auth-context";
+import { Toaster } from "~/components/ui/toaster";
+import type { ReactNode } from "react";
+import appCss from "~/styles/app.css?url";
+
+const queryClient = new QueryClient();
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Argus" },
+    ],
+    links: [{ rel: "stylesheet", href: appCss }],
+  }),
+  shellComponent: RootDocument,
+});
+
+function RootDocument({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
+        </QueryClientProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+}
