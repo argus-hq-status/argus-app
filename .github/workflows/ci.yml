@@ -23,6 +23,7 @@ jobs:
           key: yarn-${{ hashFiles('yarn.lock') }}
       - run: npm install -g yarn
       - run: yarn install --frozen-lockfile
+      - run: yarn lint
       - run: yarn typecheck
       - run: yarn build
 

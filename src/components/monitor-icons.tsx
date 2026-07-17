@@ -1,4 +1,4 @@
-export function MonitorLight({ className, weight }: { className?: string; weight?: string }) {
+export function MonitorLight({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ export function MonitorLight({ className, weight }: { className?: string; weight
   );
 }
 
-export function CheckCircleLight({ className, weight }: { className?: string; weight?: string }) {
+export function CheckCircleLight({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

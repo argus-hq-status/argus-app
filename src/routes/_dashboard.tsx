@@ -43,7 +43,7 @@ function DashboardLayout() {
 function DashboardShell() {
   const pathname = useLocation().pathname;
   const { config } = useHeader();
-  const { auth } = useAuth();
+  useAuth();
   const [plan, setPlan] = useState<string | null>(null);
 
   useEffect(() => {

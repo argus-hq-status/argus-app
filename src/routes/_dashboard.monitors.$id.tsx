@@ -2,16 +2,9 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
-import { Button } from "~/components/ui/button";
 import { useSetHeader } from "~/components/layout-context";
 import { ListSkeleton } from "~/components/loading-skeleton";
 import { MonitorLight } from "../components/monitor-icons";
-
-const statusBadge: Record<string, { color: "green" | "red" | "gray"; variant: "light" | "stroke" }> = {
-  up: { color: "green", variant: "light" },
-  down: { color: "red", variant: "light" },
-  unknown: { color: "gray", variant: "stroke" },
-};
 
 interface MonitorData {
   id: string;
@@ -97,8 +90,6 @@ function MonitorDetailPage() {
       </div>
     );
   }
-
-  const badge = statusBadge[monitor.currentStatus] ?? { color: "gray", variant: "stroke" };
 
   return (
     <div>
