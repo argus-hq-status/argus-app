@@ -1,8 +1,8 @@
 FROM node:22-alpine AS deps
-RUN corepack enable && corepack prepare yarn@4 --activate
+RUN npm install -g yarn
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
-RUN yarn install --immutable
+RUN yarn install --frozen-lockfile
 
 FROM node:22-alpine AS builder
 WORKDIR /app
