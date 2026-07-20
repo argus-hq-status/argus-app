@@ -5,7 +5,7 @@ import { cn } from "~/lib/utils";
 const variants = {
   primary: {
     filled:
-      "bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),inset_0_-1px_0_0_rgba(0,0,0,0.1)] hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary/50",
+      "bg-primary text-primary-foreground hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary/50",
     stroke:
       "border border-border bg-transparent text-primary hover:bg-primary/10",
     lighter:
@@ -36,10 +36,10 @@ const variants = {
 } as const;
 
 const sizes = {
-  lg: "h-11 gap-3 rounded-xl px-5 text-sm",
-  md: "h-10 gap-3 rounded-lg px-4 text-sm",
-  sm: "h-9 gap-2.5 rounded-lg px-3 text-sm",
-  xs: "h-8 gap-2 rounded-lg px-2.5 text-xs",
+  lg: "h-11 gap-3 rounded px-5 text-sm",
+  md: "h-10 gap-3 rounded px-4 text-sm",
+  sm: "h-9 gap-2.5 rounded px-3 text-sm",
+  xs: "h-8 gap-2 rounded px-2.5 text-xs",
 } as const;
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
