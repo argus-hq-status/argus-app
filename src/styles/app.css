@@ -2,6 +2,86 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f0f0f;
+  --card: #ffffff;
+  --card-foreground: #0f0f0f;
+  --primary: #19e76e;
+  --primary-foreground: #ffffff;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --border: #e5e5e5;
+  --bg-sub: #e5e5e5;
+  --bg-weak: #f5f5f5;
+  --bg-white: #ffffff;
+  --text-sub: #737373;
+  --text-disabled: #a3a3a3;
+  --stroke-sub: #d4d4d4;
+  --stroke-soft: #e5e5e5;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --info: #2563eb;
+  --info-light: #dbeafe;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --error: #dc2626;
+  --error-light: #fee2e2;
+}
+
+.dark {
+  --background: #111111;
+  --foreground: #f5f5f5;
+  --card: #1a1a1a;
+  --card-foreground: #f5f5f5;
+  --primary: #19e76e;
+  --primary-foreground: #0f0f0f;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --border: #262626;
+  --bg-sub: #262626;
+  --bg-weak: #1a1a1a;
+  --bg-white: #1a1a1a;
+  --text-sub: #a3a3a3;
+  --text-disabled: #525252;
+  --stroke-sub: #333333;
+  --stroke-soft: #262626;
+  --success: #22c55e;
+  --success-light: #052e16;
+  --info: #3b82f6;
+  --info-light: #172554;
+  --warning: #f59e0b;
+  --warning-light: #451a03;
+  --error: #ef4444;
+  --error-light: #450a0a;
+}
+
 @theme {
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-bg-sub: var(--bg-sub);
+  --color-bg-weak: var(--bg-weak);
+  --color-bg-white: var(--bg-white);
+  --color-text-sub: var(--text-sub);
+  --color-text-disabled: var(--text-disabled);
+  --color-stroke-sub: var(--stroke-sub);
+  --color-stroke-soft: var(--stroke-soft);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
 }
