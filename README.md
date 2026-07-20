@@ -41,36 +41,34 @@ yarn typecheck
 
 ## Deployment
 
-Estimated **$0/mo** using free tiers:
+**$0/mo** — deployed on [Vercel](https://vercel.com) (Hobby tier).
 
-| Resource | Service | Cost |
+The Nitro preset is already set to `vercel` in `vite.config.ts`. Build produces a
+`.vercel/output/` directory that Vercel recognises automatically.
+
+### Via Git (recommended)
+
+1. Push your repo to GitHub.
+2. Go to [vercel.com](https://vercel.com) → **Add New Project** → import your
+   `argus-app` repo.
+3. Set **Framework Preset** to **Other** (Auto-detect works too).
+4. Set the following environment variables:
+   | Variable | Value |
+   |---|---|
+   | `API_URL` | URL of your deployed engine (e.g. `https://argus-engine.onrender.com`) |
+5. Deploy — Vercel runs `yarn build` and serves the output.
+
+### Via CLI
+
+```bash
+npx vercel --prod
+```
+
+Vercel will prompt you to log in and link the project. Set `API_URL` when prompted
+or in the dashboard.
+
+### Environment Variables
+
+| Variable | Required | Source |
 |---|---|---|
-| SSR app | [Railway](https://railway.app) (always-on) | Free (500 hr/mo) |
-| — or — | [Fly.io](https://fly.io) (shared-cpu-1x) | Free (3 VMs) |
-| — or — | [Cloudflare Pages](https://pages.cloudflare.com) (SSR via Nitro adapter) | Free |
-
-Deploy via Docker (Dockerfile included) or push to Railway / Fly.io from Git.
-
-### Railway (easiest)
-
-1. `railway login`
-2. `railway init`
-3. Set env vars via dashboard
-4. `railway up` — auto-detects the Dockerfile
-
-### Fly.io
-
-```bash
-fly launch
-fly secrets set API_URL=https://engine.fly.dev
-fly deploy
-```
-
-### Cloudflare Pages (SSR)
-
-Set `nitro.preset: "cloudflare-pages"` in `vite.config.ts`, then:
-
-```bash
-yarn build
-npx wrangler pages deploy .output/public
-```
+| `API_URL` | Yes | Deployed engine URL (see engine README) |
