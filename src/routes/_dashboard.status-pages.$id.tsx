@@ -38,7 +38,7 @@ function EditStatusPage() {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await api(\`/api/status-pages/${params.id}`);
+      const res = await api(`/api/status-pages/${params.id}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
       setPage(data);
@@ -53,7 +53,7 @@ function EditStatusPage() {
 
   async function handleSave() {
     setSaving(true);
-    await api(\`/api/status-pages/${params.id}`, {
+    await api(`/api/status-pages/${params.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, slug }),

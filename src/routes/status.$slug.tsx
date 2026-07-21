@@ -61,7 +61,7 @@ function PublicStatusPage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    api(\`/api/public/status/${slug}`)
+    api(`/api/public/status/${slug}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
       .then((d) => { setData(d); setLoading(false); })
       .catch(() => { setError(true); setLoading(false); });
@@ -246,7 +246,7 @@ function SubscribeSection({ statusPageId }: { statusPageId: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setMessage("");
-    const res = await api(\`/api/public/status/${statusPageId}/subscribe`, {
+    const res = await api(`/api/public/status/${statusPageId}/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

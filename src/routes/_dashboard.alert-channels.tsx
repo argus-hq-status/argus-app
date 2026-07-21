@@ -68,7 +68,7 @@ function AlertChannelsPage() {
   }
 
   async function handleDelete(id: string) {
-    await api(\`/api/alert-channels/${id}`, { method: "DELETE" });
+    await api(`/api/alert-channels/${id}`, { method: "DELETE" });
     load();
   }
 

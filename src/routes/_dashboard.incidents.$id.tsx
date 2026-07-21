@@ -63,7 +63,7 @@ function IncidentDetailPage() {
     if (!confirm("Delete this incident permanently?")) return;
     setDeleting(true);
     try {
-      const res = await api(\`/api/incidents/${params.id}`, { method: "DELETE" });
+      const res = await api(`/api/incidents/${params.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       navigate({ to: "/incidents" });
     } catch (e) {
@@ -77,7 +77,7 @@ function IncidentDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await api(\`/api/incidents/${params.id}`);
+      const res = await api(`/api/incidents/${params.id}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
       setIncident(data);
@@ -96,7 +96,7 @@ function IncidentDetailPage() {
     if (!message.trim()) return;
     setSubmitting(true);
     try {
-      const res = await api(\`/api/incidents/${params.id}/updates`, {
+      const res = await api(`/api/incidents/${params.id}/updates`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: message.trim(), status: newStatus }),

@@ -56,9 +56,9 @@ function MonitorDetailPage() {
       setLoading(true);
       setError(null);
       const [monRes, checksRes, incRes] = await Promise.all([
-        api(\`/api/monitors/${params.id}`),
-        api(\`/api/monitors/${params.id}/checks`),
-        api(\`/api/incidents`),
+        api(`/api/monitors/${params.id}`),
+        api(`/api/monitors/${params.id}/checks`),
+        api(`/api/incidents`),
       ]);
       if (!monRes.ok) throw new Error("Not found");
       setMonitor(await monRes.json());
