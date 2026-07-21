@@ -1,7 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getSession } from "../lib/auth-context";
-import AuthHeader from "../components/auth-header";
-import AuthFooter from "../components/auth-footer";
+import { ThemeSwitcher } from "../components/theme-switcher";
 
 export const Route = createFileRoute("/_auth")({
   beforeLoad: async () => {
@@ -13,12 +12,19 @@ export const Route = createFileRoute("/_auth")({
 
 function AuthLayout() {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <AuthHeader />
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-[#111111] p-4 sm:p-6 lg:p-8 transition-colors duration-300">
+      <div className="flex flex-1 flex-col justify-start">
+        <div className="flex size-12 items-center justify-center rounded bg-[#1FC36B] text-2xl font-medium text-white">
+          a
+        </div>
+      </div>
+      <div className="flex w-full max-w-[480px] flex-col">
         <Outlet />
-      </main>
-      <AuthFooter />
+      </div>
+      
+      <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50">
+        <ThemeSwitcher />
+      </div>
     </div>
   );
 }

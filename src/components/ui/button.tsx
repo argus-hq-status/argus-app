@@ -70,7 +70,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "group relative inline-flex items-center justify-center whitespace-nowrap font-medium outline-none",
+          "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium outline-none",
           "transition duration-200 ease-out",
           "disabled:pointer-events-none disabled:opacity-50",
           variants[variant][mode],
