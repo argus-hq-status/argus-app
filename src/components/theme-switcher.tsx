@@ -3,7 +3,7 @@ import { useTheme } from "./theme-provider";
 import * as Dropdown from "./ui/dropdown";
 
 export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   return (
     <Dropdown.Root>
