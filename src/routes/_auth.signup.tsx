@@ -39,7 +39,7 @@ function SignupPage() {
     <Card className="relative flex h-full w-full flex-col justify-center p-8 sm:p-12">
       <div className="absolute right-8 top-8 text-sm text-gray-500 dark:text-gray-400">
         Already have an account?{" "}
-        <Link to="/login" className="font-medium text-[#1FC36B] hover:underline">
+        <Link to="/login" className="font-medium text-primary hover:underline">
           Sign in
         </Link>
       </div>
@@ -86,7 +86,7 @@ function SignupPage() {
         <Button 
           type="submit" 
           loading={loading}
-          className="mt-8 flex h-11 w-full items-center justify-center gap-2 bg-[#1FC36B] font-normal text-white hover:bg-[#1CA85C] focus-visible:ring-[#1FC36B]/50"
+          className="mt-8 flex h-11 w-full items-center justify-center gap-2 font-normal"
         >
           Continue <CaretRight className="size-3.5" weight="bold" />
         </Button>
@@ -102,11 +102,12 @@ function SignupPage() {
       </div>
 
       <div className="flex flex-col gap-5">
-        <Button 
-          type="button" 
+        <Button
+          type="button"
           variant="neutral"
           mode="stroke"
-          className="flex h-11 w-full items-center justify-center gap-2 border-gray-300 bg-white font-normal text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-300 dark:hover:bg-gray-800"
+          onClick={() => { window.location.href = "/api/auth/github/login"; }}
+          className="flex h-11 w-full items-center justify-center gap-2"
         >
           <GithubLogo className="size-5" weight="fill" />
           <span>Continue with GitHub</span>
@@ -130,8 +131,8 @@ function SignupPage() {
 
       <div className="fixed bottom-8 left-8 sm:bottom-12 sm:left-12 max-w-[360px] text-xs font-light text-gray-400 dark:text-gray-500">
         By creating an account, you agree to the{" "}
-        <a href="#" className="font-normal text-gray-500 transition-colors hover:text-[#1FC36B] dark:text-gray-400">Terms of Service</a> and{" "}
-        <a href="#" className="font-normal text-gray-500 transition-colors hover:text-[#1FC36B] dark:text-gray-400">Privacy Policy</a>
+        <a href="#" className="font-normal text-gray-500 transition-colors hover:text-primary dark:text-gray-400">Terms of Service</a> and{" "}
+        <a href="#" className="font-normal text-gray-500 transition-colors hover:text-primary dark:text-gray-400">Privacy Policy</a>
       </div>
     </Card>
   );

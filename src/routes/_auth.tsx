@@ -14,7 +14,7 @@ function AuthLayout() {
   return (
     <div className="flex min-h-screen w-full bg-gray-50 dark:bg-[#111111] p-4 sm:p-6 lg:p-8 transition-colors duration-300">
       <div className="flex flex-1 flex-col justify-start">
-        <div className="flex size-12 items-center justify-center rounded bg-[#1FC36B] text-2xl font-medium text-white">
+        <div className="flex size-12 items-center justify-center rounded bg-primary text-2xl font-medium text-primary-foreground">
           a
         </div>
       </div>
