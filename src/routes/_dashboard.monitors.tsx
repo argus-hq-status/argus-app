@@ -4,6 +4,7 @@ import { Plus, Monitor, WarningCircle } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
 import { Button, ActionButton } from "~/components/ui/button";
 import { EmptyState } from "~/components/empty-state";
+import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 import { useSetHeader } from "~/components/layout-context";
 
@@ -42,7 +43,7 @@ function MonitorsPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/monitors");
+      const res = await api("/api/monitors");
       if (!res.ok) throw new Error("Failed to load monitors");
       setMonitors(await res.json());
     } catch (e) {

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, CreditCard } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { api } from "~/lib/api";
 import { useSetHeader } from "~/components/layout-context";
 
 export const Route = createFileRoute("/_dashboard/billing")({
@@ -19,7 +20,7 @@ function BillingPage() {
   });
 
   useEffect(() => {
-    fetch("/api/billing/plan")
+    api("/api/billing/plan")
       .then((res) => res.json())
       .then((data) => setPlan(data.plan))
       .catch(() => {});
@@ -27,7 +28,7 @@ function BillingPage() {
 
   async function handleStripeCheckout() {
     setLoading("stripe");
-    const res = await fetch("/api/billing/stripe/checkout", { method: "POST" });
+    const res = await api("/api/billing/stripe/checkout", { method: "POST" });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     setLoading(null);
@@ -35,7 +36,7 @@ function BillingPage() {
 
   async function handlePaystackCheckout() {
     setLoading("paystack");
-    const res = await fetch("/api/billing/paystack/initialize", { method: "POST" });
+    const res = await api("/api/billing/paystack/initialize", { method: "POST" });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     setLoading(null);

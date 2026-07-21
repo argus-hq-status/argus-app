@@ -9,6 +9,7 @@ import { getSession, useAuth } from "../lib/auth-context";
 import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import * as Dropdown from "../components/ui/dropdown";
+import { api } from "../lib/api";
 import { LayoutProvider, useHeader } from "../components/layout-context";
 
 export const Route = createFileRoute("/_dashboard")({
@@ -45,7 +46,7 @@ function DashboardShell() {
   const [plan, setPlan] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/billing/plan", { credentials: "include" })
+    api("/api/billing/plan")
       .then((res) => res.json())
       .then((data) => setPlan(data.plan))
       .catch(() => {});

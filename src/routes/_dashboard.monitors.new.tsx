@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { Input, Select } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
+import { api } from "~/lib/api";
 import { useSetHeader } from "~/components/layout-context";
 
 const regions = [
@@ -37,7 +38,7 @@ function NewMonitorPage() {
     setError("");
     setSaving(true);
     try {
-      const res = await fetch("/api/monitors", {
+      const res = await api("/api/monitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

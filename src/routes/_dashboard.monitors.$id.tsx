@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
 import { useSetHeader } from "~/components/layout-context";
+import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 import { MonitorLight } from "../components/monitor-icons";
 
@@ -55,9 +56,9 @@ function MonitorDetailPage() {
       setLoading(true);
       setError(null);
       const [monRes, checksRes, incRes] = await Promise.all([
-        fetch(`/api/monitors/${params.id}`),
-        fetch(`/api/monitors/${params.id}/checks`),
-        fetch(`/api/incidents`),
+        api(\`/api/monitors/${params.id}`),
+        api(\`/api/monitors/${params.id}/checks`),
+        api(\`/api/incidents`),
       ]);
       if (!monRes.ok) throw new Error("Not found");
       setMonitor(await monRes.json());

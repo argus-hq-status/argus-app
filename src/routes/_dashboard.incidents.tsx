@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
 import { useSetHeader } from "~/components/layout-context";
 import { EmptyState } from "~/components/empty-state";
+import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
 interface Incident {
@@ -55,7 +56,7 @@ function IncidentsPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/incidents");
+      const res = await api("/api/incidents");
       if (!res.ok) throw new Error("Failed to load incidents");
       setIncidents(await res.json());
     } catch (e) {

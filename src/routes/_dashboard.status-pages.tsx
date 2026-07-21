@@ -5,6 +5,7 @@ import { Input } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { useSetHeader } from "~/components/layout-context";
 import { EmptyState } from "~/components/empty-state";
+import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
 interface StatusPage {
@@ -33,7 +34,7 @@ function StatusPagesPage() {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/status-pages");
+      const res = await api("/api/status-pages");
       setPages(await res.json());
     } finally {
       setLoading(false);
@@ -45,7 +46,7 @@ function StatusPagesPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreating(true);
-    const res = await fetch("/api/status-pages", {
+    const res = await api("/api/status-pages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, slug }),

@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
 import { useSetHeader } from "~/components/layout-context";
 import { EmptyState } from "~/components/empty-state";
+import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
 interface AlertChannel {
@@ -40,7 +41,7 @@ function AlertChannelsPage() {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/alert-channels");
+      const res = await api("/api/alert-channels");
       setChannels(await res.json());
     } finally {
       setLoading(false);
@@ -54,7 +55,7 @@ function AlertChannelsPage() {
     setError("");
     setAdding(true);
     try {
-      const res = await fetch("/api/alert-channels", {
+      const res = await api("/api/alert-channels", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type, target }),
@@ -67,7 +68,7 @@ function AlertChannelsPage() {
   }
 
   async function handleDelete(id: string) {
-    await fetch(`/api/alert-channels/${id}`, { method: "DELETE" });
+    await api(\`/api/alert-channels/${id}`, { method: "DELETE" });
     load();
   }
 
