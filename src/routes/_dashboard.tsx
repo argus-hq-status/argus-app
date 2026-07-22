@@ -1,8 +1,22 @@
 import { Outlet, createFileRoute, Link, useLocation, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
-  Monitor, WarningCircle, StackSimple, Bell, CreditCard,
-  GearSix, SignOut, User, Star, List, CaretRight, MagnifyingGlass,
+  Monitor,
+  WarningCircle,
+  StackSimple,
+  Bell,
+  CreditCard,
+  GearSix,
+  SignOut,
+  User,
+  Star,
+  CaretLeft,
+  CaretRight,
+  CaretDown,
+  MagnifyingGlass,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle,
 } from "@phosphor-icons/react";
 import { cn } from "../lib/utils";
 import { getSession, useAuth } from "../lib/auth-context";
@@ -11,6 +25,7 @@ import { Badge } from "../components/ui/badge";
 import * as Dropdown from "../components/ui/dropdown";
 import { api } from "../lib/api";
 import { LayoutProvider, useHeader } from "../components/layout-context";
+import { Button } from "../components/ui/button";
 
 export const Route = createFileRoute("/_dashboard")({
   beforeLoad: async () => {
@@ -27,9 +42,12 @@ const mainNavItems = [
   { href: "/alert-channels", label: "Alert Channels", icon: Bell },
 ];
 
-const otherNavItems = [
+const workspaceNavItems = [
   { href: "/billing", label: "Billing", icon: CreditCard },
 ];
+
+const SIDEBAR_WIDTH = "13.75rem";
+const SIDEBAR_WIDTH_ICON = "3.25rem";
 
 function DashboardLayout() {
   return (
@@ -44,6 +62,7 @@ function DashboardShell() {
   useAuth();
   const [plan, setPlan] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const { config } = useHeader();
 
   useEffect(() => {
     api("/api/billing/plan")
@@ -53,183 +72,257 @@ function DashboardShell() {
   }, []);
 
   return (
-    <div className="flex h-screen w-full flex-col bg-[#fbfbfb] text-[#1f1f1f] antialiased select-none font-sans text-xs">
-      <div className="flex flex-1 overflow-hidden">
-        {/* LEFT NAV SIDEBAR */}
-        <aside className={cn(
-          "shrink-0 border-r border-[#e8e8e8] bg-[#f7f7f8] flex flex-col justify-between transition-all duration-200 ease-linear",
-          collapsed ? "w-16" : "w-56",
-        )}>
-          <div className="flex flex-col">
-            {/* Top Bar */}
-            <div className="p-3 pb-2 space-y-3 border-b border-[#ececec]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 cursor-pointer hover:bg-black/5 p-1 rounded transition">
-                  <div className="size-6 rounded bg-primary text-primary-foreground flex items-center justify-center text-[11px] font-bold">
-                    A
-                  </div>
-                  {!collapsed && (
-                    <>
-                      <span className="font-semibold text-xs text-[#111]">ArgusHQ</span>
-                      <CaretRight className="size-3 text-[#777]" />
-                    </>
-                  )}
-                </div>
-                {!collapsed && (
-                  <div className="flex items-center gap-1 text-[#666]">
-                    <button className="p-1 hover:bg-black/5 rounded transition">
-                      <MagnifyingGlass className="size-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setCollapsed(true)}
-                      className="p-1 hover:bg-black/5 rounded transition"
-                    >
-                      <List className="size-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
+    <div
+      className="flex h-svh max-h-svh overflow-hidden bg-shell font-sans text-xs text-foreground antialiased selection:bg-primary/20"
+      style={
+        {
+          "--sidebar-width": collapsed ? SIDEBAR_WIDTH_ICON : SIDEBAR_WIDTH,
+        } as React.CSSProperties
+      }
+    >
+      {/* APP SIDEBAR (Athena V2 Style) */}
+      <aside
+        className={cn(
+          "flex flex-col shrink-0 bg-shell transition-[width] duration-200 ease-linear select-none",
+          collapsed ? "w-[3.25rem]" : "w-[13.75rem]",
+        )}
+      >
+        {/* Header: Logo & Workspace Selector */}
+        <div className="flex flex-col gap-2 p-2.5">
+          <div
+            className={cn(
+              "flex items-center gap-2 px-1 py-1",
+              collapsed && "justify-center px-0",
+            )}
+          >
+            {/* Athena Style Logo */}
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+              <ShieldCheck className="size-4" weight="bold" />
             </div>
-
-            {/* Navigation */}
-            <div className="p-3 space-y-4 overflow-y-auto">
-              {/* Main Nav */}
-              <div>
-                {!collapsed && (
-                  <div className="px-2 pb-1.5 text-[10px] font-semibold text-[#888] uppercase tracking-wider">
-                    Main
-                  </div>
-                )}
-                <nav className="space-y-0.5">
-                  {mainNavItems.map(({ href, label, icon: Icon }) => {
-                    const isActive = pathname.startsWith(href);
-                    return (
-                      <Link
-                        key={href}
-                        to={href}
-                        className={cn(
-                          "w-full flex items-center gap-2.5 rounded-md text-xs font-medium transition",
-                          collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
-                          isActive
-                            ? "bg-[#e8ebf0] text-[#1c4ed8]"
-                            : "text-[#444] hover:bg-black/5",
-                        )}
-                        title={collapsed ? label : undefined}
-                      >
-                        <Icon className={cn("size-4", isActive ? "text-[#1c4ed8]" : "text-[#666]")} />
-                        {!collapsed && <span>{label}</span>}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </div>
-
-              {/* Other Nav */}
-              <div>
-                {!collapsed && (
-                  <div className="px-2 pb-1.5 text-[10px] font-semibold text-[#888] uppercase tracking-wider">
-                    Other
-                  </div>
-                )}
-                <nav className="space-y-0.5">
-                  {otherNavItems.map(({ href, label, icon: Icon }) => {
-                    const isActive = pathname.startsWith(href);
-                    return (
-                      <Link
-                        key={href}
-                        to={href}
-                        className={cn(
-                          "w-full flex items-center gap-2.5 rounded-md text-xs font-medium transition",
-                          collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
-                          isActive
-                            ? "bg-[#e8ebf0] text-[#1c4ed8]"
-                            : "text-[#444] hover:bg-black/5",
-                        )}
-                        title={collapsed ? label : undefined}
-                      >
-                        <Icon className={cn("size-4", isActive ? "text-[#1c4ed8]" : "text-[#666]")} />
-                        {!collapsed && <span>{label}</span>}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom: User */}
-          <div className="border-t border-[#ececec] p-3">
-            {collapsed ? (
-              <button
-                onClick={() => setCollapsed(false)}
-                className="flex w-full items-center justify-center rounded-md p-2 text-[#444] hover:bg-black/5 transition"
-              >
-                <CaretRight className="size-4" />
-              </button>
-            ) : (
-              <UserDropdown plan={plan} />
+            {!collapsed && (
+              <span className="text-sm font-semibold tracking-tight text-foreground">
+                ArgusHQ
+              </span>
             )}
           </div>
-        </aside>
 
-        {/* RIGHT CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0 bg-white">
-          {/* Thin Header Bar */}
-          <header className="h-11 border-b border-[#e9e9e9] px-4 flex items-center justify-between shrink-0 bg-[#fafafa]">
-            <HeaderBreadcrumb />
-            <HeaderActions />
-          </header>
+          {/* Client / Workspace Selector Button */}
+          {!collapsed && (
+            <Dropdown.Root>
+              <Dropdown.Trigger className="flex w-full items-center justify-between rounded-md border border-border/60 bg-card px-2 py-1 text-xs text-card-foreground shadow-2xs hover:bg-muted/60 transition outline-none">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="size-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="truncate font-medium text-[11px]">Production Org</span>
+                </div>
+                <CaretDown className="size-3 text-muted-foreground shrink-0" />
+              </Dropdown.Trigger>
+              <Dropdown.Content side="bottom" align="start" className="w-52">
+                <Dropdown.Label>Workspaces</Dropdown.Label>
+                <Dropdown.Separator />
+                <Dropdown.Item>
+                  <div className="flex items-center gap-2">
+                    <div className="size-2 rounded-full bg-emerald-500" />
+                    <span>Production Org</span>
+                  </div>
+                </Dropdown.Item>
+                <Dropdown.Item>
+                  <div className="flex items-center gap-2">
+                    <div className="size-2 rounded-full bg-amber-500" />
+                    <span>Staging Org</span>
+                  </div>
+                </Dropdown.Item>
+              </Dropdown.Content>
+            </Dropdown.Root>
+          )}
+        </div>
 
-          {/* Content Panel */}
-          <div className="flex-1 flex flex-col overflow-hidden bg-white">
-            <div className="min-h-0 flex-1 overflow-auto">
-              <div className="flex w-full flex-col gap-8 px-5 py-8">
-                <Outlet />
+        {/* Sidebar Nav Items */}
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-2 py-2">
+          {/* Main Section */}
+          <div>
+            {!collapsed && (
+              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Main
               </div>
-            </div>
+            )}
+            <nav className="space-y-0.5">
+              {mainNavItems.map(({ href, label, icon: Icon }) => {
+                const isActive = pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    to={href}
+                    className={cn(
+                      "group relative flex items-center gap-2.5 rounded-md text-xs transition duration-150 ease-out",
+                      collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
+                      isActive
+                        ? "bg-primary/10 font-medium text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                    title={collapsed ? label : undefined}
+                  >
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0",
+                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                      )}
+                      weight={isActive ? "bold" : "regular"}
+                    />
+                    {!collapsed && <span>{label}</span>}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Workspace Section */}
+          <div>
+            {!collapsed && (
+              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Workspace
+              </div>
+            )}
+            <nav className="space-y-0.5">
+              {workspaceNavItems.map(({ href, label, icon: Icon }) => {
+                const isActive = pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    to={href}
+                    className={cn(
+                      "group relative flex items-center gap-2.5 rounded-md text-xs transition duration-150 ease-out",
+                      collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
+                      isActive
+                        ? "bg-primary/10 font-medium text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                    title={collapsed ? label : undefined}
+                  >
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0",
+                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                      )}
+                      weight={isActive ? "bold" : "regular"}
+                    />
+                    {!collapsed && <span>{label}</span>}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
         </div>
-      </div>
+
+        {/* Sidebar Footer */}
+        <div className="p-2 border-t border-border/40 flex items-center justify-between">
+          {!collapsed ? (
+            <div className="flex items-center justify-between w-full">
+              <UserDropdown plan={plan} />
+              <button
+                onClick={() => setCollapsed(true)}
+                className="p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition"
+                title="Collapse sidebar"
+              >
+                <CaretLeft className="size-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setCollapsed(false)}
+              className="flex w-full items-center justify-center p-2 rounded-md text-muted-foreground hover:bg-muted transition"
+              title="Expand sidebar"
+            >
+              <CaretRight className="size-3.5" />
+            </button>
+          )}
+        </div>
+      </aside>
+
+      {/* MAIN CONTENT INSET (Athena V2 Style: p-2 pl-1.5) */}
+      <main className="min-h-0 flex-1 flex flex-col overflow-hidden bg-shell p-2 pl-1.5 gap-2">
+        {/* TOP HEADER (Outside main content panel) */}
+        <header className="flex shrink-0 items-center justify-between px-1">
+          <div /> {/* Left spacer */}
+          <div className="flex items-center gap-1.5">
+            <Button variant="neutral" mode="stroke" size="xs" className="w-48 justify-start text-muted-foreground px-2 font-normal">
+              <MagnifyingGlass className="size-3.5" />
+              <span>Search...</span>
+            </Button>
+            {config.actions}
+          </div>
+        </header>
+
+        {/* MAIN CONTENT PANEL (rounded-[10px] bg-background border border-border/60 shadow-xs) */}
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background border border-border/60 shadow-2xs">
+          {/* ATHENA STYLE PAGE HEADER (No bottom border) */}
+          <header className="flex shrink-0 items-center justify-between gap-4 bg-background px-5 py-3.5">
+            {/* Title / Breadcrumb & Icon Badge */}
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/80 ring-1 ring-inset ring-border/50 text-foreground">
+                <Monitor className="size-4 text-muted-foreground" />
+              </div>
+              <div className="min-w-0 flex flex-col gap-0.5">
+                <HeaderBreadcrumb title={config.title} />
+                {config.description && (
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    {config.description}
+                  </p>
+                )}
+              </div>
+            </div>
+            
+            {/* Right side spacer if needed, actions moved up */}
+            <div />
+          </header>
+
+          {/* PAGE CONTENT CONTAINER */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-6">
+            <Outlet />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
 
-function HeaderBreadcrumb() {
+function HeaderBreadcrumb({ title }: { title: string }) {
   const { config } = useHeader();
   const pathname = useLocation().pathname;
   const segments = pathname.split("/").filter(Boolean);
+
+  if (config.breadcrumb && config.breadcrumb.length > 0) {
+    return (
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm font-semibold tracking-tight text-foreground">
+        {config.breadcrumb.map((crumb, idx) => (
+          <span key={crumb.label} className="flex items-center gap-1">
+            {idx > 0 && <ArrowRight className="size-3 text-muted-foreground/60" />}
+            {crumb.href ? (
+              <Link to={crumb.href} className="text-muted-foreground hover:text-foreground transition">
+                {crumb.label}
+              </Link>
+            ) : (
+              <span>{crumb.label}</span>
+            )}
+          </span>
+        ))}
+      </nav>
+    );
+  }
+
   return (
-    <div className="flex items-center gap-2 text-xs">
+    <div className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-foreground">
       {segments.map((seg, i) => {
         const isLast = i === segments.length - 1;
         const label = seg.charAt(0).toUpperCase() + seg.slice(1);
         return (
-          <span key={seg} className="flex items-center gap-2">
-            {i > 0 && <span className="text-[#ccc]">/</span>}
-            <span className={isLast ? "font-semibold text-[#111]" : "text-[#888] hover:underline cursor-pointer"}>
+          <span key={seg} className="flex items-center gap-1">
+            {i > 0 && <ArrowRight className="size-3 text-muted-foreground/60" />}
+            <span className={isLast ? "text-foreground font-semibold" : "text-muted-foreground font-normal"}>
               {label}
             </span>
           </span>
         );
       })}
-      {config.breadcrumb?.map((item) => (
-        <span key={item.label} className="flex items-center gap-2">
-          <span className="text-[#ccc]">/</span>
-          <span className="font-semibold text-[#111]">{item.label}</span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function HeaderActions() {
-  const { config } = useHeader();
-  return (
-    <div className="flex items-center gap-2 text-[#555]">
-      {config.description && (
-        <span className="text-xs text-[#888] mr-2">{config.description}</span>
-      )}
-      {config.actions}
     </div>
   );
 }
@@ -237,38 +330,33 @@ function HeaderActions() {
 function UserDropdown({ plan }: { plan: string | null }) {
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="flex w-full items-center gap-3 rounded-md p-2 transition hover:bg-black/5">
-        <Avatar size="sm" />
-        <div className="flex-1 text-left min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-[#222] truncate">User</span>
-            <Star className="size-3 shrink-0 fill-amber-400 text-amber-400" weight="fill" />
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Badge variant="light" color="blue" size="sm">{plan ?? "Free"}</Badge>
-          </div>
+      <Dropdown.Trigger className="flex items-center gap-1.5 rounded-md p-1 text-xs text-foreground transition hover:bg-muted/70 min-w-0 outline-none">
+        <Avatar size="sm" className="size-5 text-[9px]" />
+        <div className="flex flex-col text-left min-w-0">
+          <span className="font-medium truncate text-[11px]">User</span>
+          <span className="text-[9px] text-muted-foreground">{plan ?? "Free Plan"}</span>
         </div>
-        <List className="size-3 shrink-0 text-[#777]" />
       </Dropdown.Trigger>
-      <Dropdown.Content side="right" sideOffset={24} align="end">
+      <Dropdown.Content side="top" align="start" className="w-52">
+        <Dropdown.Label>User Account</Dropdown.Label>
+        <Dropdown.Separator />
         <Dropdown.Item asChild>
-          <button className="flex w-full items-center gap-3">
-            <User className="size-5 text-muted-foreground" />
-            Profile
-          </button>
+          <Link to="/billing" className="flex items-center gap-2">
+            <CreditCard className="size-3.5" />
+            <span>Billing & Plan</span>
+          </Link>
         </Dropdown.Item>
-        <Dropdown.Item asChild>
-          <button className="flex w-full items-center gap-3">
-            <GearSix className="size-5 text-muted-foreground" />
-            Settings
-          </button>
+        <Dropdown.Separator />
+        <Dropdown.Item
+          onSelect={async () => {
+            await api("/api/auth/logout", { method: "POST" });
+            window.location.href = "/login";
+          }}
+          className="text-error"
+        >
+          <SignOut className="size-3.5" />
+          <span>Sign Out</span>
         </Dropdown.Item>
-        <Dropdown.Separator className="-mx-1 my-1 h-px bg-border" />
-        <Dropdown.Item onClick={() => (window.location.href = "/login")}>
-          <SignOut className="size-5 text-muted-foreground" />
-          Logout
-        </Dropdown.Item>
-        <div className="p-2 text-xs text-muted-foreground">v.0.1.0</div>
       </Dropdown.Content>
     </Dropdown.Root>
   );

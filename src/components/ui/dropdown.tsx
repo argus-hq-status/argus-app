@@ -52,7 +52,23 @@ const DropdownItem = React.forwardRef<
     {...rest}
   />
 ));
-DropdownItem.displayName = "DropdownItem";
+const DropdownLabel = React.forwardRef<
+  React.ComponentRef<typeof DropdownMenuPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
+    inset?: boolean;
+  }
+>(({ className, inset, ...rest }, ref) => (
+  <DropdownMenuPrimitive.Label
+    ref={ref}
+    className={cn(
+      "px-2 py-1.5 text-xs font-semibold text-muted-foreground",
+      inset && "pl-9",
+      className,
+    )}
+    {...rest}
+  />
+));
+DropdownLabel.displayName = "DropdownLabel";
 
 export {
   DropdownRoot as Root,
@@ -62,4 +78,6 @@ export {
   DropdownItem as Item,
   DropdownGroup as Group,
   DropdownSeparator as Separator,
+  DropdownLabel as Label,
 };
+
