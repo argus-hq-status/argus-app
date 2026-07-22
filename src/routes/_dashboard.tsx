@@ -145,7 +145,7 @@ function DashboardShell() {
                 Main
               </div>
             )}
-            <nav className="space-y-1">
+            <nav className="space-y-1.5">
               {mainNavItems.map(({ href, label, icon: Icon }) => {
                 const isActive = pathname.startsWith(href);
                 return (
@@ -182,7 +182,7 @@ function DashboardShell() {
                 Workspace
               </div>
             )}
-            <nav className="space-y-1">
+            <nav className="space-y-1.5">
               {workspaceNavItems.map(({ href, label, icon: Icon }) => {
                 const isActive = pathname.startsWith(href);
                 return (
