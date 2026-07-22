@@ -254,25 +254,16 @@ function DashboardShell() {
 
         {/* MAIN CONTENT PANEL */}
         <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background">
-          {/* ATHENA STYLE PAGE HEADER (No bottom border) */}
+          {/* PAGE HEADER (title + description, no icon) */}
           <header className="flex shrink-0 items-center justify-between gap-4 bg-background px-5 py-3.5">
-            {/* Title / Breadcrumb & Icon Badge */}
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/80 ring-1 ring-inset ring-border/50 text-foreground">
-                <Monitor className="size-4 text-muted-foreground" />
-              </div>
-              <div className="min-w-0 flex flex-col gap-0.5">
-                <HeaderBreadcrumb title={config.title} />
-                {config.description && (
-                  <p className="truncate text-[11px] text-muted-foreground">
-                    {config.description}
-                  </p>
-                )}
-              </div>
+            <div className="min-w-0 flex flex-col gap-0.5">
+              <HeaderBreadcrumb title={config.title} />
+              {config.description && (
+                <p className="truncate text-[11px] text-muted-foreground">
+                  {config.description}
+                </p>
+              )}
             </div>
-            
-            {/* Right side spacer if needed, actions moved up */}
-            <div />
           </header>
 
           {/* PAGE CONTENT CONTAINER */}
