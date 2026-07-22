@@ -240,22 +240,10 @@ function DashboardShell() {
 
       {/* MAIN CONTENT INSET (Athena V2 Style: p-2 pl-1.5) */}
       <main className="min-h-0 flex-1 flex flex-col overflow-hidden bg-shell p-2 pl-1.5 gap-2">
-        {/* TOP HEADER (Outside main content panel) */}
-        <header className="flex shrink-0 items-center justify-between px-1">
-          <div /> {/* Left spacer */}
-          <div className="flex items-center gap-1.5">
-            <Button variant="neutral" mode="stroke" size="xs" className="w-48 justify-start text-muted-foreground px-2 font-normal">
-              <MagnifyingGlass className="size-3.5" />
-              <span>Search...</span>
-            </Button>
-            {config.actions}
-          </div>
-        </header>
-
         {/* MAIN CONTENT PANEL */}
         <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background">
-          {/* PAGE HEADER (title + description, no icon) */}
-          <header className="flex shrink-0 items-center justify-between gap-4 bg-background px-5 py-3.5">
+          {/* PAGE HEADER (title + description + search/actions) */}
+          <header className="flex shrink-0 items-center justify-between gap-4 bg-gray-50 dark:bg-neutral-900 px-5 py-3.5">
             <div className="min-w-0 flex flex-col gap-0.5">
               <HeaderBreadcrumb title={config.title} />
               {config.description && (
@@ -263,6 +251,13 @@ function DashboardShell() {
                   {config.description}
                 </p>
               )}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Button variant="neutral" mode="stroke" size="xs" className="w-48 justify-start text-muted-foreground px-2 font-normal">
+                <MagnifyingGlass className="size-3.5" />
+                <span>Search...</span>
+              </Button>
+              {config.actions}
             </div>
           </header>
 
