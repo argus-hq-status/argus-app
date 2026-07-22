@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Monitor, WarningCircle } from "@phosphor-icons/react";
+import { Plus, WarningCircle } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
 import { Button, ActionButton } from "~/components/ui/button";
 import { EmptyState } from "~/components/empty-state";
@@ -69,7 +69,6 @@ function MonitorsPage() {
   if (monitors.length === 0) {
     return (
       <EmptyState
-        icon={Monitor}
         title="No monitors yet"
         description="Create your first monitor to start tracking uptime."
         action={

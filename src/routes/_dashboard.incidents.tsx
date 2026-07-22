@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { WarningCircle, CheckCircle, MagnifyingGlass } from "@phosphor-icons/react";
+import { WarningCircle } from "@phosphor-icons/react";
 import { Input } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
@@ -86,7 +86,6 @@ function IncidentsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          icon={incidents.length === 0 ? CheckCircle : MagnifyingGlass}
           title={incidents.length === 0 ? "No incidents" : "No matching incidents"}
           description={
             incidents.length === 0

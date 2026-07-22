@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { StackSimple, Plus, Pencil, ArrowUpRight } from "@phosphor-icons/react";
+import { Plus, Pencil, ArrowUpRight } from "@phosphor-icons/react";
 import { Input } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { useSetHeader } from "~/components/layout-context";
@@ -66,7 +66,7 @@ function StatusPagesPage() {
       {loading ? (
         <ListSkeleton count={3} />
       ) : pages.length === 0 ? (
-        <EmptyState icon={StackSimple} title="No status pages" description="Create a status page to share with your users." />
+        <EmptyState title="No status pages" description="Create a status page to share with your users." />
       ) : (
         <div className="space-y-2">
           {pages.map((p) => (

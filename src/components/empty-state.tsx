@@ -68,7 +68,6 @@ export function EmptyStateServerIllustration({ className }: { className?: string
 }
 
 export function EmptyState({
-  icon: Icon, // unused in brand style but kept for compat
   title,
   description,
   action,
@@ -76,7 +75,6 @@ export function EmptyState({
   compact = false,
   embedded = false,
 }: {
-  icon?: React.ComponentType<{ className?: string }>;
   title: string;
   description?: string;
   action?: ReactNode;

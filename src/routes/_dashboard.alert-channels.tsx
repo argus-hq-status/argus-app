@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { Bell, Plus, Trash, WarningCircle } from "@phosphor-icons/react";
+import { Plus, Trash, WarningCircle } from "@phosphor-icons/react";
 import { Input, Select } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
@@ -95,7 +95,7 @@ function AlertChannelsPage() {
       {loading ? (
         <ListSkeleton count={3} />
       ) : channels.length === 0 ? (
-        <EmptyState icon={Bell} title="No alert channels" description="Add an email, Slack, or Discord channel to get notified." />
+        <EmptyState title="No alert channels" description="Add an email, Slack, or Discord channel to get notified." />
       ) : (
         <div className="space-y-2">
           {channels.map((ch) => {
