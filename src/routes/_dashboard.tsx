@@ -109,10 +109,10 @@ function DashboardShell() {
           {/* Client / Workspace Selector Button */}
           {!collapsed && (
             <Dropdown.Root>
-              <Dropdown.Trigger className="flex w-full items-center justify-between rounded-md border border-border/60 bg-card px-2 py-1 text-xs text-card-foreground shadow-2xs hover:bg-muted/60 transition outline-none">
+              <Dropdown.Trigger className="flex w-full items-center justify-between rounded-md border border-border/60 bg-card px-2 py-1 text-sm text-card-foreground shadow-2xs hover:bg-muted/60 transition outline-none">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                  <span className="truncate font-medium text-[11px]">Production Org</span>
+                  <span className="truncate font-medium text-xs">Production Org</span>
                 </div>
                 <CaretDown className="size-3 text-muted-foreground shrink-0" />
               </Dropdown.Trigger>
@@ -141,7 +141,7 @@ function DashboardShell() {
           {/* Main Section */}
           <div>
             {!collapsed && (
-              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="px-2 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Main
               </div>
             )}
@@ -153,7 +153,7 @@ function DashboardShell() {
                     key={href}
                     to={href}
                     className={cn(
-                      "group relative flex items-center gap-2.5 rounded-md text-xs transition duration-150 ease-out",
+                      "group relative flex items-center gap-2.5 rounded-md text-sm transition duration-150 ease-out",
                       collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
                       isActive
                         ? "bg-primary/10 font-medium text-primary"
@@ -178,7 +178,7 @@ function DashboardShell() {
           {/* Workspace Section */}
           <div>
             {!collapsed && (
-              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="px-2 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Workspace
               </div>
             )}
@@ -190,7 +190,7 @@ function DashboardShell() {
                     key={href}
                     to={href}
                     className={cn(
-                      "group relative flex items-center gap-2.5 rounded-md text-xs transition duration-150 ease-out",
+                      "group relative flex items-center gap-2.5 rounded-md text-sm transition duration-150 ease-out",
                       collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
                       isActive
                         ? "bg-primary/10 font-medium text-primary"
@@ -259,7 +259,7 @@ function DashboardShell() {
             <div className="min-w-0 flex flex-col gap-0.5">
               <HeaderBreadcrumb title={config.title} />
               {config.description && (
-                <p className="truncate text-[11px] text-muted-foreground">
+                <p className="truncate text-sm text-muted-foreground">
                   {config.description}
                 </p>
               )}
@@ -321,11 +321,11 @@ function HeaderBreadcrumb({ title }: { title: string }) {
 function UserDropdown({ plan }: { plan: string | null }) {
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="flex items-center gap-1.5 rounded-md p-1 text-xs text-foreground transition hover:bg-muted/70 min-w-0 outline-none">
+      <Dropdown.Trigger className="flex items-center gap-1.5 rounded-md p-1 text-sm text-foreground transition hover:bg-muted/70 min-w-0 outline-none">
         <Avatar size="sm" className="size-5 text-[9px]" />
         <div className="flex flex-col text-left min-w-0">
-          <span className="font-medium truncate text-[11px]">User</span>
-          <span className="text-[9px] text-muted-foreground">{plan ?? "Free Plan"}</span>
+          <span className="font-medium truncate text-xs">User</span>
+          <span className="text-[11px] text-muted-foreground">{plan ?? "Free Plan"}</span>
         </div>
       </Dropdown.Trigger>
       <Dropdown.Content side="top" align="start" className="w-52">
