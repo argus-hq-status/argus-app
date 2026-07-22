@@ -85,7 +85,7 @@ function LoginPage() {
         <Button 
           type="submit" 
           loading={loading}
-          className="mt-8 flex h-11 w-full items-center justify-center gap-2 font-normal"
+          className="mt-8 w-full font-normal"
         >
           Sign in <CaretRight className="size-3.5" weight="bold" />
         </Button>
@@ -106,7 +106,7 @@ function LoginPage() {
           variant="neutral"
           mode="stroke"
           onClick={() => { window.location.href = "/api/auth/github/login"; }}
-          className="flex h-11 w-full items-center justify-center gap-2"
+          className="w-full font-normal"
         >
           <GithubLogo className="size-5" weight="fill" />
           <span>Continue with GitHub</span>
@@ -117,7 +117,7 @@ function LoginPage() {
             type="button" 
             variant="neutral"
             mode="stroke"
-            className="flex h-11 w-full items-center justify-center gap-2 border-gray-300 bg-white font-normal text-gray-700 hover:bg-gray-50 cursor-not-allowed dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-300 dark:hover:bg-gray-800"
+            className="w-full border-gray-300 bg-white font-normal text-gray-700 hover:bg-gray-50 cursor-not-allowed dark:border-gray-700 dark:bg-[#1a1a1a] dark:text-gray-300 dark:hover:bg-gray-800"
           >
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="size-5" />
             <span>Continue with Google</span>

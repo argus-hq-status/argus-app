@@ -86,7 +86,7 @@ function SignupPage() {
         <Button 
           type="submit" 
           loading={loading}
-          className="mt-8 flex h-11 w-full items-center justify-center gap-2 font-normal"
+          className="mt-8 w-full font-normal"
         >
           Continue <CaretRight className="size-3.5" weight="bold" />
         </Button>
