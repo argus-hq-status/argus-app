@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4000";
 
@@ -70,9 +70,31 @@ const AuthContext = createContext<{
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthState>({ user: null, workspace: null, loading: true });
 
-  useEffect(() => {
-    getSession().then((data) => setAuth({ ...data, loading: false }));
+  const checkSession = useCallback(async () => {
+    try {
+      const data = await getSession();
+      setAuth(data);
+      if (!data.user && typeof window !== "undefined" && !window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/signup")) {
+        window.location.href = "/login";
+      }
+    } catch {
+      setAuth({ user: null, workspace: null, loading: false });
+    }
   }, []);
+
+  useEffect(() => {
+    checkSession();
+
+    const interval = setInterval(checkSession, 5 * 60 * 1000);
+
+    const handleExpired = () => checkSession();
+    window.addEventListener("auth:expired", handleExpired);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("auth:expired", handleExpired);
+    };
+  }, [checkSession]);
 
   return <AuthContext.Provider value={{ auth, setAuth }}>{children}</AuthContext.Provider>;
 }
