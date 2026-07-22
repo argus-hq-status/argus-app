@@ -68,7 +68,7 @@ function DashboardShell() {
     api("/api/billing/plan")
       .then((res) => res.json())
       .then((data) => setPlan(data.plan))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -243,7 +243,7 @@ function DashboardShell() {
         {/* MAIN CONTENT PANEL */}
         <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background">
           {/* PAGE HEADER (title + description + search/actions) */}
-          <header className="flex shrink-0 items-center justify-between gap-4 bg-gray-50 dark:bg-neutral-900 px-5 py-3.5">
+          <header className="flex shrink-0 items-center justify-between gap-4 bg-background border-b border-border/40 px-5 py-3.5">
             <div className="min-w-0 flex flex-col gap-0.5">
               <HeaderBreadcrumb title={config.title} />
               {config.description && (
