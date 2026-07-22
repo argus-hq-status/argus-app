@@ -5,7 +5,7 @@ import { cn } from "~/lib/utils";
 const buttonVariantStyles = {
   primary: {
     filled:
-      "bg-primary text-primary-foreground shadow-xs hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary/50",
+      "bg-primary text-primary-foreground shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.1)] hover:bg-primary/90 hover:shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.15)] ring-1 ring-inset ring-black/10 focus-visible:ring-2 focus-visible:ring-primary/50",
     stroke:
       "bg-card text-primary ring-1 ring-inset ring-primary hover:bg-primary/10 hover:ring-transparent",
     lighter:
@@ -15,7 +15,7 @@ const buttonVariantStyles = {
   },
   neutral: {
     filled:
-      "bg-foreground text-background shadow-xs hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-foreground/30",
+      "bg-foreground text-background shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.1)] hover:bg-foreground/90 hover:shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.15)] ring-1 ring-inset ring-black/10 focus-visible:ring-2 focus-visible:ring-foreground/30",
     stroke:
       "bg-card text-foreground/80 shadow-xs ring-1 ring-inset ring-border hover:bg-muted hover:text-foreground hover:ring-transparent",
     lighter:
@@ -25,7 +25,7 @@ const buttonVariantStyles = {
   },
   error: {
     filled:
-      "bg-error text-white shadow-xs hover:brightness-110 focus-visible:ring-2 focus-visible:ring-error/50",
+      "bg-error text-white shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.1)] hover:bg-error/90 hover:shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.15)] ring-1 ring-inset ring-black/10 focus-visible:ring-2 focus-visible:ring-error/50",
     stroke:
       "bg-card text-error ring-1 ring-inset ring-error/40 hover:bg-error/10 hover:ring-transparent",
     lighter:
@@ -70,7 +70,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition duration-200 ease-out",
+          "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition-all duration-200 ease-out active:scale-[0.98]",
           "focus:outline-none disabled:pointer-events-none disabled:opacity-50",
           buttonVariantStyles[variant][mode],
           buttonSizeStyles[size],
