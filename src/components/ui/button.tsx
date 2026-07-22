@@ -124,7 +124,7 @@ export function ActionButton({
   children,
   variant = "primary",
   mode = "filled",
-  size = "md",
+  size = "sm",
 }: ActionButtonProps) {
   return (
     <Link to={href}>

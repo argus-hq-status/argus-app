@@ -73,7 +73,7 @@ function DashboardShell() {
 
   return (
     <div
-      className="flex h-svh max-h-svh overflow-hidden bg-shell font-sans text-xs text-foreground antialiased selection:bg-primary/20"
+      className="flex h-svh max-h-svh overflow-hidden bg-shell font-sans text-sm text-foreground antialiased selection:bg-primary/20"
       style={
         {
           "--sidebar-width": collapsed ? SIDEBAR_WIDTH_ICON : SIDEBAR_WIDTH,
@@ -252,8 +252,8 @@ function DashboardShell() {
           </div>
         </header>
 
-        {/* MAIN CONTENT PANEL (rounded-[10px] bg-background border border-border/60 shadow-xs) */}
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background border border-border/60 shadow-2xs">
+        {/* MAIN CONTENT PANEL */}
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] bg-background">
           {/* ATHENA STYLE PAGE HEADER (No bottom border) */}
           <header className="flex shrink-0 items-center justify-between gap-4 bg-background px-5 py-3.5">
             {/* Title / Breadcrumb & Icon Badge */}
