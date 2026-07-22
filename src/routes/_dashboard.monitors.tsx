@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { Plus, WarningCircle } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
 import { Button, ActionButton } from "~/components/ui/button";
 import { EmptyState } from "~/components/empty-state";
@@ -58,11 +58,11 @@ function MonitorsPage() {
   if (loading) return <ListSkeleton count={6} />;
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-lg border border-stroke-soft bg-bg-white px-6 py-12">
-        <WarningCircle className="size-8 text-error" weight="regular" />
-        <p className="text-sm font-medium text-text-strong">{error}</p>
-        <Button variant="neutral" onClick={load}>Retry</Button>
-      </div>
+      <EmptyState
+        title="Something went wrong"
+        description={error}
+        action={<Button variant="primary" onClick={load}>Retry</Button>}
+      />
     );
   }
 

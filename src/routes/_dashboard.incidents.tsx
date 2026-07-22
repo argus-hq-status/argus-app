@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { WarningCircle } from "@phosphor-icons/react";
 import { Input } from "@cloudflare/kumo";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
@@ -77,13 +76,11 @@ function IncidentsPage() {
       {loading ? (
         <ListSkeleton count={4} />
       ) : error ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-stroke-soft bg-bg-white px-6 py-12">
-          <div className="flex size-12 items-center justify-center rounded-lg bg-error-light">
-            <WarningCircle className="size-6 text-error" weight="regular" />
-          </div>
-          <p className="text-sm font-medium text-text-strong">{error}</p>
-          <Button variant="neutral" onClick={load}>Retry</Button>
-        </div>
+        <EmptyState
+          title="Something went wrong"
+          description={error}
+          action={<Button variant="primary" onClick={load}>Retry</Button>}
+        />
       ) : filtered.length === 0 ? (
         <EmptyState
           title={incidents.length === 0 ? "No incidents" : "No matching incidents"}
