@@ -1,8 +1,7 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { TwentyDashboard } from "../components/dashboard/twenty-dashboard";
 
 export const Route = createFileRoute("/_dashboard/")({
-  component: () => null,
-  beforeLoad: () => {
-    throw redirect({ to: "/monitors" });
-  },
+  component: TwentyDashboard,
 });
+
