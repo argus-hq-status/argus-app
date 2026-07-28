@@ -7,6 +7,8 @@ export default ts.config(
   {
     ignores: [
       ".output/",
+      ".vercel/",
+      "dist/",
       "node_modules/",
       "public/",
       "src/routeTree.gen.ts",
