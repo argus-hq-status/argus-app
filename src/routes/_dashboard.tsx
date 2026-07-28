@@ -1,22 +1,18 @@
 import { Outlet, createFileRoute, Link, useLocation, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
+  Eye,
   Monitor,
   WarningCircle,
   StackSimple,
   Bell,
   CreditCard,
-  GearSix,
   SignOut,
-  User,
-  Star,
-  CaretLeft,
+  Plus,
   CaretRight,
   CaretDown,
   MagnifyingGlass,
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle,
+  SidebarSimple,
 } from "@phosphor-icons/react";
 import { cn } from "../lib/utils";
 import { getSession, useAuth } from "../lib/auth-context";
@@ -24,8 +20,8 @@ import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import * as Dropdown from "../components/ui/dropdown";
 import { api } from "../lib/api";
-import { LayoutProvider, useHeader } from "../components/layout-context";
-import { Button } from "../components/ui/button";
+import { ThemeSwitcher } from "../components/theme-switcher";
+import { Input } from "../components/ui/input";
 
 export const Route = createFileRoute("/_dashboard")({
   beforeLoad: async () => {
@@ -35,26 +31,16 @@ export const Route = createFileRoute("/_dashboard")({
   component: DashboardLayout,
 });
 
-const mainNavItems = [
+const navItems = [
   { href: "/monitors", label: "Monitors", icon: Monitor },
   { href: "/incidents", label: "Incidents", icon: WarningCircle },
   { href: "/status-pages", label: "Status Pages", icon: StackSimple },
   { href: "/alert-channels", label: "Alert Channels", icon: Bell },
-];
-
-const workspaceNavItems = [
   { href: "/billing", label: "Billing", icon: CreditCard },
 ];
 
-const SIDEBAR_WIDTH = "13.75rem";
-const SIDEBAR_WIDTH_ICON = "3.25rem";
-
 function DashboardLayout() {
-  return (
-    <LayoutProvider>
-      <DashboardShell />
-    </LayoutProvider>
-  );
+  return <DashboardShell />;
 }
 
 function DashboardShell() {
@@ -62,7 +48,6 @@ function DashboardShell() {
   useAuth();
   const [plan, setPlan] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
-  const { config } = useHeader();
 
   useEffect(() => {
     api("/api/billing/plan")
@@ -71,198 +56,116 @@ function DashboardShell() {
       .catch(() => { });
   }, []);
 
+  const isPro = plan === "pro";
+
   return (
-    <div
-      className="flex h-svh max-h-svh overflow-hidden bg-gray-50 dark:bg-[#111111] font-sans text-sm text-foreground antialiased selection:bg-primary/20"
-      style={
-        {
-          "--sidebar-width": collapsed ? SIDEBAR_WIDTH_ICON : SIDEBAR_WIDTH,
-        } as React.CSSProperties
-      }
-    >
-      {/* APP SIDEBAR (Athena V2 Style) */}
+    <div className="flex h-svh max-h-svh overflow-hidden bg-[#f4f5f7] dark:bg-[#111111] font-sans text-sm text-foreground antialiased selection:bg-primary/20 transition-colors duration-300">
+      {/* Sidebar */}
       <aside
         className={cn(
-          "flex flex-col shrink-0 bg-shell transition-[width] duration-200 ease-linear select-none",
-          collapsed ? "w-[3.25rem]" : "w-[13.75rem]",
+          "flex shrink-0 flex-col transition-[width] duration-200 ease-linear select-none",
+          collapsed ? "w-[68px]" : "w-[260px]",
         )}
       >
-        {/* Header: Logo & Workspace Selector */}
-        <div className="flex flex-col gap-2 p-2.5">
-          <div
-            className={cn(
-              "flex items-center gap-2 px-1 py-1",
-              collapsed && "justify-center px-0",
-            )}
-          >
-            {/* Athena Style Logo */}
-            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
-              <ShieldCheck className="size-4" weight="bold" />
-            </div>
-            {!collapsed && (
-              <span className="text-sm font-semibold tracking-tight text-foreground">
-                ArgusHQ
-              </span>
-            )}
+        {/* Logo + collapse */}
+        <div className={cn("flex items-center p-4", collapsed ? "justify-center" : "justify-between")}>
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Eye className="size-5" weight="bold" />
           </div>
-
-          {/* Client / Workspace Selector Button */}
           {!collapsed && (
-            <Dropdown.Root>
-              <Dropdown.Trigger className="flex w-full items-center justify-between rounded-md border border-border/60 bg-card px-2 py-1 text-sm text-card-foreground shadow-2xs hover:bg-muted/60 transition outline-none">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                  <span className="truncate font-medium text-xs">Production Org</span>
-                </div>
-                <CaretDown className="size-3 text-muted-foreground shrink-0" />
-              </Dropdown.Trigger>
-              <Dropdown.Content side="bottom" align="start" className="w-52">
-                <Dropdown.Label>Workspaces</Dropdown.Label>
-                <Dropdown.Separator />
-                <Dropdown.Item>
-                  <div className="flex items-center gap-2">
-                    <div className="size-2 rounded-full bg-emerald-500" />
-                    <span>Production Org</span>
-                  </div>
-                </Dropdown.Item>
-                <Dropdown.Item>
-                  <div className="flex items-center gap-2">
-                    <div className="size-2 rounded-full bg-amber-500" />
-                    <span>Staging Org</span>
-                  </div>
-                </Dropdown.Item>
-              </Dropdown.Content>
-            </Dropdown.Root>
+            <button
+              onClick={() => setCollapsed(true)}
+              className="flex size-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white hover:text-gray-700 dark:hover:bg-[#1a1a1a] dark:hover:text-gray-200"
+              aria-label="Collapse sidebar"
+            >
+              <SidebarSimple className="size-4" />
+            </button>
           )}
         </div>
 
-        {/* Sidebar Nav Items */}
-        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-2 py-2">
-          {/* Main Section */}
-          <div>
-            {!collapsed && (
-              <div className="px-2 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Main
-              </div>
-            )}
-            <nav className="space-y-1.5">
-              {mainNavItems.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    to={href}
-                    className={cn(
-                      "group relative flex items-center gap-2 rounded-md text-sm transition duration-150 ease-out",
-                      collapsed ? "justify-center px-0 py-2" : "px-2 py-1",
-                      isActive
-                        ? "bg-primary/10 font-medium text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
-                    title={collapsed ? label : undefined}
-                  >
-                    <Icon
-                      className={cn(
-                        "size-3.5 shrink-0",
-                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
-                      )}
-                      weight={isActive ? "bold" : "regular"}
-                    />
-                    {!collapsed && <span>{label}</span>}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+        {collapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            className="mx-auto mb-2 flex size-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white dark:hover:bg-[#1a1a1a]"
+            aria-label="Expand sidebar"
+          >
+            <CaretRight className="size-4" />
+          </button>
+        )}
 
-          {/* Workspace Section */}
-          <div>
-            {!collapsed && (
-              <div className="px-2 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Workspace
-              </div>
-            )}
-            <nav className="space-y-1.5">
-              {workspaceNavItems.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    to={href}
-                    className={cn(
-                      "group relative flex items-center gap-2 rounded-md text-sm transition duration-150 ease-out",
-                      collapsed ? "justify-center px-0 py-2" : "px-2 py-1",
-                      isActive
-                        ? "bg-primary/10 font-medium text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
-                    title={collapsed ? label : undefined}
-                  >
-                    <Icon
-                      className={cn(
-                        "size-3.5 shrink-0",
-                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
-                      )}
-                      weight={isActive ? "bold" : "regular"}
-                    />
-                    {!collapsed && <span>{label}</span>}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-
-        {/* Sidebar Footer */}
-        <div className="p-2 border-t border-border/40 flex items-center justify-between">
-          {!collapsed ? (
-            <div className="flex items-center justify-between w-full">
-              <UserDropdown plan={plan} />
-              <button
-                onClick={() => setCollapsed(true)}
-                className="p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition"
-                title="Collapse sidebar"
-              >
-                <CaretLeft className="size-3.5" />
-              </button>
+        {/* Search */}
+        {!collapsed && (
+          <div className="px-4 pb-3">
+            <div className="relative">
+              <MagnifyingGlass className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-gray-400" />
+              <Input
+                placeholder="Search..."
+                className="h-9 rounded-lg border-gray-200 bg-white pl-9 text-sm dark:border-[#2a2a2a] dark:bg-[#1a1a1a]"
+                readOnly
+              />
             </div>
-          ) : (
-            <button
-              onClick={() => setCollapsed(false)}
-              className="flex w-full items-center justify-center p-2 rounded-md text-muted-foreground hover:bg-muted transition"
-              title="Expand sidebar"
+          </div>
+        )}
+
+        {/* Quick action */}
+        {!collapsed && (
+          <div className="px-4 pb-4">
+            <Link
+              to="/monitors/new"
+              className="flex items-center gap-2 text-sm font-medium text-primary transition hover:text-primary/80"
             >
-              <CaretRight className="size-3.5" />
-            </button>
+              <Plus className="size-4" weight="bold" />
+              New monitor
+            </Link>
+          </div>
+        )}
+
+        {/* Nav */}
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <Link
+                key={href}
+                to={href}
+                title={collapsed ? label : undefined}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition",
+                  collapsed && "justify-center px-0",
+                  isActive
+                    ? "bg-gray-200 font-medium text-gray-900 dark:bg-[#2a2a2a] dark:text-gray-50"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#1a1a1a] dark:hover:text-gray-50",
+                )}
+              >
+                <Icon
+                  className={cn("size-4 shrink-0", isActive ? "text-primary" : "text-gray-400")}
+                  weight={isActive ? "fill" : "regular"}
+                />
+                {!collapsed && <span>{label}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer: theme + user */}
+        <div className="mt-auto border-t border-gray-200/80 p-3 dark:border-[#2a2a2a]">
+          <div className={cn("mb-2 flex", collapsed ? "justify-center" : "justify-end px-1")}>
+            <ThemeSwitcher />
+          </div>
+          {!collapsed ? (
+            <UserDropdown plan={plan} isPro={isPro} />
+          ) : (
+            <div className="flex justify-center">
+              <Avatar size="sm" className="size-8 text-[10px]" />
+            </div>
           )}
         </div>
       </aside>
 
-      {/* MAIN CONTENT INSET (Athena V2 Style: p-2 pl-1.5) */}
-      <main className="min-h-0 flex-1 flex flex-col overflow-hidden bg-shell p-2 pl-1.5 gap-2">
-        {/* MAIN CONTENT PANEL */}
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          {/* PAGE HEADER (title + description + search/actions) */}
-          <header className="flex shrink-0 items-center justify-between gap-4 bg-background border-b border-border/40 px-5 py-3.5">
-            <div className="min-w-0 flex flex-col gap-0.5">
-              <HeaderBreadcrumb title={config.title} />
-              {config.description && (
-                <p className="truncate text-sm text-muted-foreground">
-                  {config.description}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Button variant="neutral" mode="stroke" size="md" className="w-48 justify-start text-muted-foreground px-4 font-normal">
-                <MagnifyingGlass className="size-3.5" />
-                <span>Search...</span>
-              </Button>
-              {config.actions}
-            </div>
-          </header>
-
-          {/* PAGE CONTENT CONTAINER */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6">
+      {/* Main panel */}
+      <main className="min-h-0 flex-1 p-3 pl-0">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
             <Outlet />
           </div>
         </div>
@@ -271,60 +174,28 @@ function DashboardShell() {
   );
 }
 
-function HeaderBreadcrumb({ title }: { title: string }) {
-  const { config } = useHeader();
-  const pathname = useLocation().pathname;
-  const segments = pathname.split("/").filter(Boolean);
-
-  if (config.breadcrumb && config.breadcrumb.length > 0) {
-    return (
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm font-semibold tracking-tight text-foreground">
-        {config.breadcrumb.map((crumb, idx) => (
-          <span key={crumb.label} className="flex items-center gap-1">
-            {idx > 0 && <ArrowRight className="size-3 text-muted-foreground/60" />}
-            {crumb.href ? (
-              <Link to={crumb.href} className="text-muted-foreground hover:text-foreground transition">
-                {crumb.label}
-              </Link>
-            ) : (
-              <span>{crumb.label}</span>
-            )}
-          </span>
-        ))}
-      </nav>
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-foreground">
-      {segments.map((seg, i) => {
-        const isLast = i === segments.length - 1;
-        const label = seg.charAt(0).toUpperCase() + seg.slice(1);
-        return (
-          <span key={seg} className="flex items-center gap-1">
-            {i > 0 && <ArrowRight className="size-3 text-muted-foreground/60" />}
-            <span className={isLast ? "text-foreground font-semibold" : "text-muted-foreground font-normal"}>
-              {label}
-            </span>
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-function UserDropdown({ plan }: { plan: string | null }) {
+function UserDropdown({ plan, isPro }: { plan: string | null; isPro: boolean }) {
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="flex items-center gap-1.5 rounded-md p-1 text-sm text-foreground transition hover:bg-muted/70 min-w-0 outline-none">
-        <Avatar size="sm" className="size-5 text-[9px]" />
-        <div className="flex flex-col text-left min-w-0">
-          <span className="font-medium truncate text-xs">User</span>
-          <span className="text-[11px] text-muted-foreground">{plan ?? "Free Plan"}</span>
+      <Dropdown.Trigger className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition hover:bg-gray-50 dark:hover:bg-[#222] outline-none">
+        <Avatar size="sm" className="size-8 text-[10px]" />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">User</span>
+            {isPro && (
+              <Badge variant="light" color="green" size="sm" className="text-[10px] px-1.5 py-0">
+                PRO
+              </Badge>
+            )}
+          </div>
+          <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+            {plan ?? "free"} plan
+          </span>
         </div>
+        <CaretDown className="size-3 shrink-0 text-gray-400" />
       </Dropdown.Trigger>
-      <Dropdown.Content side="top" align="start" className="w-52">
-        <Dropdown.Label>User Account</Dropdown.Label>
+      <Dropdown.Content side="top" align="start" className="w-56">
+        <Dropdown.Label>Account</Dropdown.Label>
         <Dropdown.Separator />
         <Dropdown.Item asChild>
           <Link to="/billing" className="flex items-center gap-2">

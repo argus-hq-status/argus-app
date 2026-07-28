@@ -20,6 +20,9 @@ import { Route as DashboardBillingRouteImport } from './routes/_dashboard.billin
 import { Route as DashboardAlertChannelsRouteImport } from './routes/_dashboard.alert-channels'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
+import { Route as DashboardStatusPagesIndexRouteImport } from './routes/_dashboard.status-pages.index'
+import { Route as DashboardMonitorsIndexRouteImport } from './routes/_dashboard.monitors.index'
+import { Route as DashboardIncidentsIndexRouteImport } from './routes/_dashboard.incidents.index'
 import { Route as DashboardStatusPagesIdRouteImport } from './routes/_dashboard.status-pages.$id'
 import { Route as DashboardMonitorsNewRouteImport } from './routes/_dashboard.monitors.new'
 import { Route as DashboardMonitorsIdRouteImport } from './routes/_dashboard.monitors.$id'
@@ -78,6 +81,22 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const DashboardStatusPagesIndexRoute =
+  DashboardStatusPagesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardStatusPagesRoute,
+  } as any)
+const DashboardMonitorsIndexRoute = DashboardMonitorsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardMonitorsRoute,
+} as any)
+const DashboardIncidentsIndexRoute = DashboardIncidentsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardIncidentsRoute,
+} as any)
 const DashboardStatusPagesIdRoute = DashboardStatusPagesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -113,6 +132,9 @@ export interface FileRoutesByFullPath {
   '/monitors/$id': typeof DashboardMonitorsIdRoute
   '/monitors/new': typeof DashboardMonitorsNewRoute
   '/status-pages/$id': typeof DashboardStatusPagesIdRoute
+  '/incidents/': typeof DashboardIncidentsIndexRoute
+  '/monitors/': typeof DashboardMonitorsIndexRoute
+  '/status-pages/': typeof DashboardStatusPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
@@ -120,14 +142,14 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/alert-channels': typeof DashboardAlertChannelsRoute
   '/billing': typeof DashboardBillingRoute
-  '/incidents': typeof DashboardIncidentsRouteWithChildren
-  '/monitors': typeof DashboardMonitorsRouteWithChildren
-  '/status-pages': typeof DashboardStatusPagesRouteWithChildren
   '/status/$slug': typeof StatusSlugRoute
   '/incidents/$id': typeof DashboardIncidentsIdRoute
   '/monitors/$id': typeof DashboardMonitorsIdRoute
   '/monitors/new': typeof DashboardMonitorsNewRoute
   '/status-pages/$id': typeof DashboardStatusPagesIdRoute
+  '/incidents': typeof DashboardIncidentsIndexRoute
+  '/monitors': typeof DashboardMonitorsIndexRoute
+  '/status-pages': typeof DashboardStatusPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -146,6 +168,9 @@ export interface FileRoutesById {
   '/_dashboard/monitors/$id': typeof DashboardMonitorsIdRoute
   '/_dashboard/monitors/new': typeof DashboardMonitorsNewRoute
   '/_dashboard/status-pages/$id': typeof DashboardStatusPagesIdRoute
+  '/_dashboard/incidents/': typeof DashboardIncidentsIndexRoute
+  '/_dashboard/monitors/': typeof DashboardMonitorsIndexRoute
+  '/_dashboard/status-pages/': typeof DashboardStatusPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,6 +188,9 @@ export interface FileRouteTypes {
     | '/monitors/$id'
     | '/monitors/new'
     | '/status-pages/$id'
+    | '/incidents/'
+    | '/monitors/'
+    | '/status-pages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -170,14 +198,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/alert-channels'
     | '/billing'
-    | '/incidents'
-    | '/monitors'
-    | '/status-pages'
     | '/status/$slug'
     | '/incidents/$id'
     | '/monitors/$id'
     | '/monitors/new'
     | '/status-pages/$id'
+    | '/incidents'
+    | '/monitors'
+    | '/status-pages'
   id:
     | '__root__'
     | '/_auth'
@@ -195,6 +223,9 @@ export interface FileRouteTypes {
     | '/_dashboard/monitors/$id'
     | '/_dashboard/monitors/new'
     | '/_dashboard/status-pages/$id'
+    | '/_dashboard/incidents/'
+    | '/_dashboard/monitors/'
+    | '/_dashboard/status-pages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -282,6 +313,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_dashboard/status-pages/': {
+      id: '/_dashboard/status-pages/'
+      path: '/'
+      fullPath: '/status-pages/'
+      preLoaderRoute: typeof DashboardStatusPagesIndexRouteImport
+      parentRoute: typeof DashboardStatusPagesRoute
+    }
+    '/_dashboard/monitors/': {
+      id: '/_dashboard/monitors/'
+      path: '/'
+      fullPath: '/monitors/'
+      preLoaderRoute: typeof DashboardMonitorsIndexRouteImport
+      parentRoute: typeof DashboardMonitorsRoute
+    }
+    '/_dashboard/incidents/': {
+      id: '/_dashboard/incidents/'
+      path: '/'
+      fullPath: '/incidents/'
+      preLoaderRoute: typeof DashboardIncidentsIndexRouteImport
+      parentRoute: typeof DashboardIncidentsRoute
+    }
     '/_dashboard/status-pages/$id': {
       id: '/_dashboard/status-pages/$id'
       path: '/$id'
@@ -327,10 +379,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardIncidentsRouteChildren {
   DashboardIncidentsIdRoute: typeof DashboardIncidentsIdRoute
+  DashboardIncidentsIndexRoute: typeof DashboardIncidentsIndexRoute
 }
 
 const DashboardIncidentsRouteChildren: DashboardIncidentsRouteChildren = {
   DashboardIncidentsIdRoute: DashboardIncidentsIdRoute,
+  DashboardIncidentsIndexRoute: DashboardIncidentsIndexRoute,
 }
 
 const DashboardIncidentsRouteWithChildren =
@@ -339,11 +393,13 @@ const DashboardIncidentsRouteWithChildren =
 interface DashboardMonitorsRouteChildren {
   DashboardMonitorsIdRoute: typeof DashboardMonitorsIdRoute
   DashboardMonitorsNewRoute: typeof DashboardMonitorsNewRoute
+  DashboardMonitorsIndexRoute: typeof DashboardMonitorsIndexRoute
 }
 
 const DashboardMonitorsRouteChildren: DashboardMonitorsRouteChildren = {
   DashboardMonitorsIdRoute: DashboardMonitorsIdRoute,
   DashboardMonitorsNewRoute: DashboardMonitorsNewRoute,
+  DashboardMonitorsIndexRoute: DashboardMonitorsIndexRoute,
 }
 
 const DashboardMonitorsRouteWithChildren =
@@ -351,10 +407,12 @@ const DashboardMonitorsRouteWithChildren =
 
 interface DashboardStatusPagesRouteChildren {
   DashboardStatusPagesIdRoute: typeof DashboardStatusPagesIdRoute
+  DashboardStatusPagesIndexRoute: typeof DashboardStatusPagesIndexRoute
 }
 
 const DashboardStatusPagesRouteChildren: DashboardStatusPagesRouteChildren = {
   DashboardStatusPagesIdRoute: DashboardStatusPagesIdRoute,
+  DashboardStatusPagesIndexRoute: DashboardStatusPagesIndexRoute,
 }
 
 const DashboardStatusPagesRouteWithChildren =

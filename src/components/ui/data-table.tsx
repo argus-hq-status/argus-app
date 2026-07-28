@@ -37,8 +37,10 @@ export type DataTableProps<T> = {
   height?: number | string;
   title?: ReactNode;
   toolbar?: ReactNode;
+  footer?: ReactNode;
   emptyState?: DataTableEmptyState;
   className?: string;
+  onRowClick?: (item: T) => void;
   defaultSort?: {
     columnId: string;
     direction: DataTableSortDirection;
@@ -53,8 +55,10 @@ export function DataTable<T>({
   height = 460,
   title,
   toolbar,
+  footer,
   emptyState,
   className,
+  onRowClick,
   defaultSort,
 }: DataTableProps<T>) {
   const [page, setPage] = useState(1);
@@ -103,47 +107,53 @@ export function DataTable<T>({
 
   const sortIndicator = (columnId: string) => {
     if (sortKey !== columnId) return null;
-    return sortDir === "asc" ? " \u2191" : " \u2193";
+    return sortDir === "asc" ? " ↑" : " ↓";
   };
 
   const resolvedHeight = typeof height === "number" ? `${height}px` : height;
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-3", className)}>
       {title || toolbar ? (
         <div
           className={cn(
-            "flex flex-col gap-3 lg:flex-row lg:items-end",
+            "flex flex-col gap-3 lg:flex-row lg:items-center",
             title ? "lg:justify-between" : "lg:justify-end",
           )}
         >
           {title ? <div>{title}</div> : null}
-          {toolbar ? <div className="w-full lg:w-auto">{toolbar}</div> : null}
+          {toolbar ? <div className="w-full lg:flex-1 lg:max-w-md">{toolbar}</div> : null}
         </div>
       ) : null}
 
       <div
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white",
+          "relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-[#2a2a2a] dark:bg-[#141414]",
           showEmptyState ? "h-auto" : undefined,
         )}
         style={showEmptyState ? undefined : { height: resolvedHeight }}
       >
         <div
           className={cn(
-            showEmptyState ? "overflow-hidden" : "min-h-0 flex-1 overflow-y-auto pb-14",
+            showEmptyState ? "overflow-hidden" : "min-h-0 flex-1 overflow-y-auto pb-12",
           )}
         >
-          <table className="w-full caption-bottom text-sm">
-            <TableHeader className="border-b border-zinc-200 bg-zinc-50/95">
-              <TableRow className="border-b border-zinc-200 hover:bg-transparent">
+          <table className="w-full caption-bottom font-mono text-xs">
+            <TableHeader className="sticky top-0 z-10 border-b border-gray-200 bg-gray-50 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]">
+              <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-[#2a2a2a]">
                 {columns.map((column) => (
-                  <TableHead key={column.id} className={column.headerClassName}>
+                  <TableHead
+                    key={column.id}
+                    className={cn(
+                      "h-9 px-4 text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400",
+                      column.headerClassName,
+                    )}
+                  >
                     {column.sortable ? (
                       <button
                         type="button"
                         onClick={() => toggleSort(column.id)}
-                        className="hover:text-zinc-800"
+                        className="hover:text-gray-900 dark:hover:text-gray-100"
                       >
                         {column.header}
                         {sortIndicator(column.id)}
@@ -158,9 +168,19 @@ export function DataTable<T>({
             <TableBody>
               {pageRows.length > 0 ? (
                 pageRows.map((item) => (
-                  <TableRow key={getRowKey(item)} className="border-b border-zinc-200">
+                  <TableRow
+                    key={getRowKey(item)}
+                    className={cn(
+                      "border-b border-gray-100 dark:border-[#222]",
+                      onRowClick && "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.03]",
+                    )}
+                    onClick={onRowClick ? () => onRowClick(item) : undefined}
+                  >
                     {columns.map((column) => (
-                      <TableCell key={column.id} className={column.cellClassName}>
+                      <TableCell
+                        key={column.id}
+                        className={cn("px-4 py-2.5", column.cellClassName)}
+                      >
                         {column.cell(item)}
                       </TableCell>
                     ))}
@@ -182,7 +202,7 @@ export function DataTable<T>({
                 <TableRow className="hover:bg-transparent">
                   <TableCell
                     colSpan={columns.length}
-                    className="py-16 text-center text-sm text-zinc-500"
+                    className="py-16 text-center text-sm text-gray-500 dark:text-gray-400"
                   >
                     No results match your filters.
                   </TableCell>
@@ -194,35 +214,38 @@ export function DataTable<T>({
 
         <div
           className={cn(
-            "flex shrink-0 items-center justify-between gap-3 border-t border-zinc-200 bg-white px-4 py-3",
+            "flex shrink-0 items-center justify-between gap-3 border-t border-gray-200 bg-gray-50/95 px-4 py-2.5 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]",
             showEmptyState
               ? "relative"
-              : "absolute inset-x-0 bottom-0 z-20 bg-white/95 backdrop-blur-sm",
+              : "absolute inset-x-0 bottom-0 z-20 backdrop-blur-sm",
           )}
         >
-          <p className="text-sm text-zinc-500">
-            Page {currentPage} of {totalPages}
-          </p>
+          <div className="flex items-center gap-4">
+            {footer}
+            <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
+              pg {currentPage}/{totalPages}
+            </p>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="neutral"
               mode="stroke"
-              size="sm"
+              size="xs"
               disabled={currentPage <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
-              <CaretLeft className="size-4" />
-              Previous
+              <CaretLeft className="size-3.5" />
+              Prev
             </Button>
             <Button
               variant="neutral"
               mode="stroke"
-              size="sm"
+              size="xs"
               disabled={currentPage >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
               Next
-              <CaretRight className="size-4" />
+              <CaretRight className="size-3.5" />
             </Button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Eye } from "@phosphor-icons/react";
 import { getSession } from "../lib/auth-context";
 import { ThemeSwitcher } from "../components/theme-switcher";
 
@@ -14,8 +15,8 @@ function AuthLayout() {
   return (
     <div className="flex min-h-screen w-full bg-gray-50 dark:bg-[#111111] p-4 sm:p-6 lg:p-8 transition-colors duration-300">
       <div className="flex flex-1 flex-col justify-start">
-        <div className="flex size-12 items-center justify-center rounded bg-primary text-2xl font-medium text-primary-foreground">
-          a
+        <div className="flex size-12 items-center justify-center rounded bg-primary text-primary-foreground">
+          <Eye className="size-6" weight="bold" />
         </div>
       </div>
       <div className="flex w-full max-w-[480px] flex-col">
