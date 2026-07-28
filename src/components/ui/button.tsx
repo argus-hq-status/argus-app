@@ -70,10 +70,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition-all duration-200 ease-out active:scale-[0.98]",
-          "focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-          buttonVariantStyles[variant][mode],
-          buttonSizeStyles[size],
+          getButtonClassName({ variant, mode, size }),
           className,
         )}
         {...props}
@@ -107,6 +104,26 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
+export function getButtonClassName({
+  variant = "primary",
+  mode = "filled",
+  size = "md",
+  className,
+}: {
+  variant?: keyof typeof buttonVariantStyles;
+  mode?: "filled" | "stroke" | "lighter" | "ghost";
+  size?: keyof typeof buttonSizeStyles;
+  className?: string;
+}) {
+  return cn(
+    "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition-all duration-200 ease-out active:scale-[0.98]",
+    "focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+    buttonVariantStyles[variant][mode],
+    buttonSizeStyles[size],
+    className,
+  );
+}
+
 export { Button };
 
 type ActionButtonProps = {
@@ -120,17 +137,19 @@ type ActionButtonProps = {
 
 export function ActionButton({
   href,
-  icon,
+  icon: Icon,
   children,
   variant = "primary",
   mode = "filled",
   size = "md",
 }: ActionButtonProps) {
   return (
-    <Link to={href}>
-      <Button variant={variant} mode={mode} size={size} icon={icon}>
-        {children}
-      </Button>
+    <Link
+      to={href}
+      className={getButtonClassName({ variant, mode, size })}
+    >
+      {Icon && <Icon className="size-4 shrink-0" />}
+      {children}
     </Link>
   );
 }

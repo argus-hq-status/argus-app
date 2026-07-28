@@ -3,7 +3,10 @@ import { useState, useEffect, useCallback } from "react";
 import { WarningCircle, Trash } from "@phosphor-icons/react";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
-import { useSetHeader } from "~/components/layout-context";
+import { Card } from "~/components/ui/card";
+import { Label } from "~/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
@@ -30,6 +33,8 @@ interface UpdateData {
   createdAt: string;
 }
 
+const statCardClass = "rounded-xl border border-gray-200 bg-white p-4 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]";
+
 export const Route = createFileRoute("/_dashboard/incidents/$id")({
   component: IncidentDetailPage,
 });
@@ -45,19 +50,6 @@ function IncidentDetailPage() {
   const [newStatus, setNewStatus] = useState("investigating");
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
-  useSetHeader({
-    title: incident?.title ?? "Incident",
-    breadcrumb: [
-      { label: "Incidents", href: "/incidents" },
-      { label: incident?.title ?? "Loading..." },
-    ],
-    actions: incident ? (
-      <Button variant="error" mode="ghost" size="sm" icon={Trash} loading={deleting} onClick={handleDelete}>
-        Delete
-      </Button>
-    ) : undefined,
-  });
 
   async function handleDelete() {
     if (!confirm("Delete this incident permanently?")) return;
@@ -114,58 +106,67 @@ function IncidentDetailPage() {
   if (loading) return <ListSkeleton count={4} />;
   if (error || !incident) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-lg border border-stroke-soft bg-bg-white px-6 py-12">
+      <Card className="flex flex-col items-center gap-3 px-6 py-12">
         <WarningCircle className="size-8 text-error" weight="regular" />
-        <p className="text-sm font-medium text-text-strong">{error ?? "Not found"}</p>
-      </div>
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{error ?? "Not found"}</p>
+      </Card>
     );
   }
 
   const cfg = statusConfig[incident.status] ?? { color: "gray" as const, label: incident.status };
 
   return (
-    <div>
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-          <p className="text-xs text-text-soft">Status</p>
+    <div className="space-y-6">
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
+          {incident.title}
+        </h1>
+        <Button variant="error" mode="ghost" size="sm" icon={Trash} loading={deleting} onClick={handleDelete}>
+          Delete
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className={statCardClass}>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
           <div className="mt-0.5">
             <Badge variant="light" color={cfg.color}>{cfg.label}</Badge>
           </div>
         </div>
-        <div className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-          <p className="text-xs text-text-soft">Type</p>
-          <p className="mt-0.5 text-sm font-medium text-text-strong">
+        <div className={statCardClass}>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Type</p>
+          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
             {incident.isAutomatic ? "Automatic" : "Manual"}
           </p>
         </div>
-        <div className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-          <p className="text-xs text-text-soft">Started</p>
-          <p className="mt-0.5 text-sm font-medium text-text-strong">
+        <div className={statCardClass}>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Started</p>
+          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
             {new Date(incident.startedAt).toLocaleString()}
           </p>
         </div>
         {incident.resolvedAt && (
-          <div className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-            <p className="text-xs text-text-soft">Resolved</p>
-            <p className="mt-0.5 text-sm font-medium text-text-strong">
+          <div className={statCardClass}>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Resolved</p>
+            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
               {new Date(incident.resolvedAt).toLocaleString()}
             </p>
           </div>
         )}
       </div>
 
-      <h2 className="mb-3 text-sm font-medium text-text-strong">Timeline</h2>
-      <div className="mb-6 space-y-0">
+      <section>
+        <h2 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-50">Timeline</h2>
         {updates.length === 0 ? (
-          <div className="flex items-center justify-center rounded-lg border border-dashed border-stroke-soft bg-bg-white px-6 py-10">
+          <Card className="flex items-center justify-center border-dashed px-6 py-10">
             <div className="text-center">
-              <WarningCircle className="mx-auto mb-2 size-6 text-text-soft" />
-              <p className="text-sm text-text-sub">No updates yet.</p>
+              <WarningCircle className="mx-auto mb-2 size-6 text-gray-400 dark:text-gray-500" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">No updates yet.</p>
             </div>
-          </div>
+          </Card>
         ) : (
           <div className="relative ml-3 space-y-0">
-            <div className="absolute bottom-0 left-[7px] top-0 w-px bg-stroke-soft" />
+            <div className="absolute bottom-0 left-[7px] top-0 w-px bg-gray-200 dark:bg-[#2a2a2a]" />
             {updates.map((u) => {
               const uc = statusConfig[u.status] ?? { color: "gray" as const, label: u.status };
               return (
@@ -180,46 +181,53 @@ function IncidentDetailPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Badge variant="light" color={uc.color} size="sm">{uc.label}</Badge>
-                      <span className="text-xs text-text-soft">
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
                         {new Date(u.createdAt).toLocaleString()}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-text-strong">{u.message}</p>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-50">{u.message}</p>
                   </div>
                 </div>
               );
             })}
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-        <h3 className="mb-3 text-sm font-medium text-text-strong">Add Update</h3>
-        <div className="space-y-3">
-          <select
-            value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value)}
-            className="block w-full rounded-lg border border-stroke-soft bg-bg-white px-3 py-2 text-sm text-text-strong outline-none focus:border-primary"
-          >
-            <option value="investigating">Investigating</option>
-            <option value="identified">Identified</option>
-            <option value="monitoring">Monitoring</option>
-            <option value="resolved">Resolved</option>
-          </select>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Describe the current status..."
-            rows={3}
-            className="block w-full rounded-lg border border-stroke-soft bg-bg-white px-3 py-2 text-sm text-text-strong outline-none placeholder:text-text-soft focus:border-primary"
-          />
+      <Card className="p-5">
+        <h3 className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-50">Add Update</h3>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+            <Select value={newStatus} onValueChange={setNewStatus}>
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="investigating">Investigating</SelectItem>
+                <SelectItem value="identified">Identified</SelectItem>
+                <SelectItem value="monitoring">Monitoring</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">Message</Label>
+            <Textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Describe the current status..."
+              rows={3}
+            />
+          </div>
           <div className="flex justify-end">
             <Button variant="primary" size="sm" loading={submitting} disabled={!message.trim()} onClick={handleAddUpdate}>
               Post Update
             </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

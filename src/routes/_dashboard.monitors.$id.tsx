@@ -1,11 +1,11 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams, Link, redirect } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
-import { useSetHeader } from "~/components/layout-context";
+import { Card } from "~/components/ui/card";
+import { LogViewer } from "~/components/log-viewer";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
-import { MonitorLight } from "../components/monitor-icons";
 
 interface MonitorData {
   id: string;
@@ -39,10 +39,17 @@ interface IncidentData {
   resolvedAt: string | null;
 }
 
+const statCardClass = "rounded-xl border border-gray-200 bg-white p-4 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]";
+const listCardClass = "rounded-xl border border-gray-200 bg-white px-4 py-3 transition hover:border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:hover:border-gray-600";
+
 export const Route = createFileRoute("/_dashboard/monitors/$id")({
+  beforeLoad: ({ params }) => {
+    if (params.id === "new") {
+      throw redirect({ to: "/monitors/new" });
+    }
+  },
   component: MonitorDetailPage,
 });
-
 function MonitorDetailPage() {
   const params = useParams({ from: "/_dashboard/monitors/$id" });
   const [monitor, setMonitor] = useState<MonitorData | null>(null);
@@ -74,27 +81,23 @@ function MonitorDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  useSetHeader({
-    title: monitor?.name ?? "Monitor",
-    breadcrumb: [
-      { label: "Monitors", href: "/monitors" },
-      { label: monitor?.name ?? "Loading..." },
-    ],
-  });
-
   if (loading) return <ListSkeleton count={6} />;
   if (error || !monitor) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-lg border border-stroke-soft bg-bg-white px-6 py-12">
+      <Card className="flex flex-col items-center gap-3 px-6 py-12">
         <WarningCircle className="size-8 text-error" weight="regular" />
-        <p className="text-sm font-medium text-text-strong">{error ?? "Not found"}</p>
-      </div>
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{error ?? "Not found"}</p>
+      </Card>
     );
   }
 
   return (
-    <div>
-      <div className="mb-6 grid grid-cols-3 gap-3">
+    <div className="space-y-6">
+      <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
+        {monitor.name}
+      </h1>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {[
           { label: "Method", value: monitor.method },
           { label: "Expected Status", value: String(monitor.expectedStatus) },
@@ -103,68 +106,43 @@ function MonitorDetailPage() {
           { label: "Consecutive Fails", value: String(monitor.consecutiveFails) },
           { label: "Active", value: monitor.isActive ? "Yes" : "No" },
         ].map(({ label, value }) => (
-          <div key={label} className="rounded-lg border border-stroke-soft bg-bg-white p-4">
-            <p className="text-xs text-text-soft">{label}</p>
-            <p className="mt-0.5 text-sm font-medium text-text-strong">{value}</p>
+          <div key={label} className={statCardClass}>
+            <p className="font-mono text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</p>
+            <p className="mt-1 font-mono text-sm font-medium text-gray-900 dark:text-gray-50">{value}</p>
           </div>
         ))}
       </div>
-
       {incidents.length > 0 && (
-        <div className="mb-6">
-          <h2 className="mb-3 text-sm font-medium text-text-strong">Incidents</h2>
+        <section>
+          <h2 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-50">Incidents</h2>
           <div className="space-y-2">
             {incidents.map((inc) => (
-              <div key={inc.id} className="rounded-lg border border-stroke-soft bg-bg-white px-4 py-3">
+              <Link
+                key={inc.id}
+                to="/incidents/$id"
+                params={{ id: inc.id }}
+                className={`block ${listCardClass}`}
+              >
                 <div className="flex items-center gap-2">
                   <WarningCircle className="size-4 text-warning" weight="regular" />
-                  <span className="text-sm font-medium text-text-strong">{inc.title}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-50">{inc.title}</span>
                   <Badge variant="light" color={inc.status === "resolved" ? "green" : "orange"} size="sm">{inc.status}</Badge>
                 </div>
-                <p className="mt-1 text-sm text-text-sub">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   {new Date(inc.startedAt).toLocaleString()}
                   {inc.resolvedAt && <> &mdash; resolved {new Date(inc.resolvedAt).toLocaleString()}</>}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      <h2 className="mb-3 text-sm font-medium text-text-strong">Recent Checks</h2>
-      {checks.length === 0 ? (
-        <div className="flex items-center justify-center rounded-lg border border-dashed border-stroke-soft bg-bg-white px-6 py-10">
-          <div className="text-center">
-            <MonitorLight className="mx-auto mb-2 size-6 text-text-soft" />
-            <p className="text-sm text-text-sub">No checks recorded yet.</p>
-          </div>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-lg border border-stroke-soft">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-bg-weak">
-                {["Status", "Region", "Response Time", "Status Code", "Checked At"].map((h) => (
-                  <th key={h} className="px-4 py-2.5 text-left text-xs font-medium text-text-sub">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {checks.map((c) => (
-                <tr key={c.id} className="border-t border-stroke-soft transition hover:bg-bg-weak">
-                  <td className="px-4 py-3">
-                    <Badge variant="light" color={c.status === "up" ? "green" : "red"} size="sm">{c.status}</Badge>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-text-sub">{c.region}</td>
-                  <td className="px-4 py-3 text-sm text-text-sub">{c.responseTimeMs ? `${c.responseTimeMs}ms` : "-"}</td>
-                  <td className="px-4 py-3 text-sm text-text-sub">{c.statusCode ?? "-"}</td>
-                  <td className="px-4 py-3 text-sm text-text-soft">{new Date(c.checkedAt).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+      <section>
+        <h2 className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          Check logs
+        </h2>
+        <LogViewer entries={checks} />
+      </section>    </div>
   );
 }
