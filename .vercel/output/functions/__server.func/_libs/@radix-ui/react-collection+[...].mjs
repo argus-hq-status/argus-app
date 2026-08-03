@@ -1,9 +1,9 @@
 import { i as __toESM } from "../../_runtime.mjs";
-import { u as require_react } from "../@floating-ui/react-dom+[...].mjs";
-import { a as useComposedRefs, i as createSlot, o as require_jsx_runtime } from "./react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react } from "../@clerk/react+[...].mjs";
+import { a as useComposedRefs, i as createSlot } from "./react-arrow+[...].mjs";
 //#region node_modules/@radix-ui/react-context/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 function createContextScope(scopeName, createContextScopeDeps = []) {
 	let defaultContexts = [];
 	function createContext3(rootComponentName, defaultContext) {

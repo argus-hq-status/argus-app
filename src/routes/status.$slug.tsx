@@ -266,9 +266,9 @@ function SubscribeSection({ statusPageId }: { statusPageId: string }) {
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required
-              className="h-10 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-200" />
+              className="h-8 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-200" />
             <button type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white transition hover:bg-gray-800">
+              className="inline-flex h-8 items-center justify-center rounded-lg bg-gray-600 px-3 text-xs font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.2)] transition hover:bg-gray-500">
               Subscribe
             </button>
             {message && <p className="text-sm text-gray-500 sm:ml-2">{message}</p>}

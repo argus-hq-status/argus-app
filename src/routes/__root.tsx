@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRoute, Link } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "~/lib/auth-context";
+import { ClerkProvider } from "@clerk/tanstack-react-start";
+import { ApiAuthBridge } from "~/lib/api-auth-bridge";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "~/components/ui/toaster";
 import type { ReactNode } from "react";
@@ -13,12 +14,16 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Argus" },
+      { title: "Strauz" },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" },
+      {
+        rel: "preload",
+        href: "/fonts/Fonts/WEB/fonts/Switzer-Variable.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       { rel: "stylesheet", href: appCss },
     ],
   }),
@@ -41,14 +46,20 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider defaultTheme="system" storageKey="argus-theme">
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              {children}
-              <Toaster />
-            </AuthProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
+        <ClerkProvider
+          signInUrl="/login"
+          signUpUrl="/signup"
+          afterSignOutUrl="/login"
+        >
+          <ThemeProvider defaultTheme="system" storageKey="argus-theme">
+            <QueryClientProvider client={queryClient}>
+              <ApiAuthBridge>
+                {children}
+                <Toaster />
+              </ApiAuthBridge>
+            </QueryClientProvider>
+          </ThemeProvider>
+        </ClerkProvider>
         <Scripts />
       </body>
     </html>

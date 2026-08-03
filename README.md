@@ -1,6 +1,6 @@
-# Argus App
+# Strauz
 
-TanStack Start (Vite + Nitro) frontend for Argus uptime monitoring.
+TanStack Start (Vite + Nitro) frontend for Strauz uptime monitoring.
 
 ## Prerequisites
 

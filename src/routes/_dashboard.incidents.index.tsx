@@ -1,11 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { WarningCircle } from "@phosphor-icons/react";
+import { WarningCircle, MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
+import { Button } from "~/components/ui/button";
 import { PageHeader } from "~/components/page-header";
 import { EmptyState } from "~/components/empty-state";
+import { DataTable } from "~/components/ui/data-table";
+import type { DataTableColumn } from "~/components/ui/data-table";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "~/components/ui/select";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
@@ -18,14 +27,30 @@ interface Incident {
   resolvedAt: string | null;
 }
 
-const statusBadge: Record<string, { color: "orange" | "blue" | "gray" | "green"; variant: "light" | "stroke" }> = {
-  investigating: { color: "orange", variant: "light" },
-  identified: { color: "blue", variant: "light" },
-  monitoring: { color: "gray", variant: "stroke" },
-  resolved: { color: "green", variant: "light" },
+const STATUS_STYLES: Record<string, { color: "orange" | "blue" | "gray" | "green"; variant: "light" | "stroke"; label: string }> = {
+  investigating: { color: "orange", variant: "light", label: "Investigating" },
+  identified: { color: "blue", variant: "light", label: "Identified" },
+  monitoring: { color: "gray", variant: "stroke", label: "Monitoring" },
+  resolved: { color: "green", variant: "light", label: "Resolved" },
 };
 
-const listCardClass = "cursor-pointer rounded-xl border border-gray-200 bg-white px-4 py-3.5 transition hover:border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:hover:border-gray-600";
+const STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "All statuses" },
+  { value: "investigating", label: "Investigating" },
+  { value: "identified", label: "Identified" },
+  { value: "monitoring", label: "Monitoring" },
+  { value: "resolved", label: "Resolved" },
+];
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export const Route = createFileRoute("/_dashboard/incidents/")({
   component: IncidentsPage,
@@ -37,6 +62,7 @@ function IncidentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const load = useCallback(async () => {
     try {
@@ -54,9 +80,69 @@ function IncidentsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const filtered = incidents.filter((inc) =>
-    inc.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = incidents.filter((inc) => {
+    const matchesSearch = inc.title.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "all" || inc.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const columns: DataTableColumn<Incident>[] = [
+    {
+      id: "title",
+      header: "Incident",
+      sortable: true,
+      sortValue: (inc) => inc.title,
+      cell: (inc) => (
+        <>
+          <p className="font-medium text-gray-900 dark:text-gray-50">{inc.title}</p>
+          {inc.isAutomatic && (
+            <Badge variant="stroke" color="gray" size="sm" className="mt-0.5">auto</Badge>
+          )}
+        </>
+      ),
+    },
+    {
+      id: "status",
+      header: "Status",
+      sortable: true,
+      sortValue: (inc) => inc.status,
+      cell: (inc) => {
+        const style = STATUS_STYLES[inc.status] ?? { color: "gray" as const, variant: "stroke" as const, label: inc.status };
+        return (
+          <Badge variant={style.variant} color={style.color} size="sm">
+            {style.label}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "startedAt",
+      header: "Started",
+      sortable: true,
+      sortValue: (inc) => new Date(inc.startedAt).getTime(),
+      cellClassName: "text-gray-500 dark:text-gray-400",
+      cell: (inc) => formatDate(inc.startedAt),
+    },
+    {
+      id: "resolvedAt",
+      header: "Resolved",
+      sortable: true,
+      sortValue: (inc) => inc.resolvedAt ? new Date(inc.resolvedAt).getTime() : 0,
+      cellClassName: "text-gray-500 dark:text-gray-400",
+      cell: (inc) => inc.resolvedAt ? formatDate(inc.resolvedAt) : "—",
+    },
+  ];
+
+  if (loading) return <ListSkeleton count={4} />;
+  if (error) {
+    return (
+      <EmptyState
+        title="Something went wrong"
+        description={error}
+        action={<Button variant="primary" onClick={load}>Retry</Button>}
+      />
+    );
+  }
 
   return (
     <div>
@@ -66,61 +152,51 @@ function IncidentsPage() {
         description="Track and manage incidents across your monitors"
       />
 
-      <div className="mb-4">
-        <Input
-          aria-label="Search incidents"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search incidents..."
-          className="h-10 w-full font-mono text-sm sm:max-w-md"
-        />
-      </div>
-
-      {loading ? (
-        <ListSkeleton count={4} />
-      ) : error ? (
-        <EmptyState
-          title="Something went wrong"
-          description={error}
-          action={<Button variant="primary" onClick={load}>Retry</Button>}
-        />
-      ) : filtered.length === 0 ? (
-        <EmptyState
-          title={incidents.length === 0 ? "No incidents" : "No matching incidents"}
-          description={
-            incidents.length === 0
-              ? "All monitors are running smoothly."
-              : "Try a different search term."
-          }
-        />
-      ) : (
-        <div className="space-y-2">
-          {filtered.map((inc) => {
-            const badge = statusBadge[inc.status] ?? { color: "gray", variant: "stroke" };
-            return (
-              <div
-                key={inc.id}
-                onClick={() => navigate({ to: "/incidents/$id", params: { id: inc.id } })}
-                className={listCardClass}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-50">{inc.title}</span>
-                    {inc.isAutomatic && (
-                      <Badge variant="stroke" color="gray" size="sm">auto</Badge>
-                    )}
-                    <Badge variant={badge.variant} color={badge.color} size="sm">{inc.status}</Badge>
-                  </div>
-                </div>
-                <p className="mt-1 font-mono text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(inc.startedAt).toLocaleString()}
-                  {inc.resolvedAt && <> — resolved {new Date(inc.resolvedAt).toLocaleString()}</>}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <DataTable
+        data={filtered}
+        columns={columns}
+        getRowKey={(inc) => inc.id}
+        pageSize={10}
+        height={520}
+        defaultSort={{ columnId: "startedAt", direction: "desc" }}
+        onRowClick={(inc) => navigate({ to: "/incidents/$id", params: { id: inc.id } })}
+        title={
+          <div className="relative">
+            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 dark:text-gray-500" />
+            <Input
+              aria-label="Search incidents"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search incidents…"
+              className="w-full pl-8 font-sans text-sm sm:w-[240px]"
+            />
+          </div>
+        }
+        toolbar={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="w-[160px]">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_FILTER_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        }
+        emptyState={{
+          title: incidents.length === 0 ? "No incidents" : "No matching incidents",
+          description: incidents.length === 0
+            ? "All monitors are running smoothly."
+            : "Try a different search term or adjust your filters.",
+        }}
+      />
     </div>
   );
 }

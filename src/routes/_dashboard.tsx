@@ -1,37 +1,49 @@
-import { Outlet, createFileRoute, Link, useLocation, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
-  Eye,
+  House,
   Monitor,
   WarningCircle,
   StackSimple,
   Bell,
   CreditCard,
-  SignOut,
   Plus,
   CaretRight,
   CaretDown,
   MagnifyingGlass,
   SidebarSimple,
+  Gear,
+  Question,
+  BookOpen,
+  SlidersHorizontal,
+  Minus,
+  Circle,
+  CheckCircle,
 } from "@phosphor-icons/react";
+import {
+  OrganizationSwitcher,
+  UserButton,
+  useAuth,
+  useOrganization,
+  useUser,
+  useClerk,
+} from "@clerk/tanstack-react-start";
 import { cn } from "../lib/utils";
-import { getSession, useAuth } from "../lib/auth-context";
-import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import * as Dropdown from "../components/ui/dropdown";
 import { api } from "../lib/api";
 import { ThemeSwitcher } from "../components/theme-switcher";
-import { Input } from "../components/ui/input";
+import { requireAuthFn } from "../lib/auth-server";
 
 export const Route = createFileRoute("/_dashboard")({
   beforeLoad: async () => {
-    const session = await getSession();
-    if (!session.user) throw redirect({ to: "/login" });
+    await requireAuthFn();
   },
   component: DashboardLayout,
 });
 
 const navItems = [
+  { href: "/", label: "Home", icon: House },
   { href: "/monitors", label: "Monitors", icon: Monitor },
   { href: "/incidents", label: "Incidents", icon: WarningCircle },
   { href: "/status-pages", label: "Status Pages", icon: StackSimple },
@@ -40,106 +52,158 @@ const navItems = [
 ];
 
 function DashboardLayout() {
+  const navigate = useNavigate();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
+  const { user, isLoaded: userLoaded } = useUser();
+  const onboardingComplete = user?.unsafeMetadata.argusOnboardingComplete === true;
+
+  useEffect(() => {
+    if (!authLoaded || !userLoaded || !isSignedIn || onboardingComplete) return;
+    void navigate({ to: "/onboarding" });
+  }, [authLoaded, isSignedIn, navigate, onboardingComplete, userLoaded]);
+
+  if (!authLoaded || !userLoaded || (isSignedIn && !onboardingComplete)) {
+    return (
+      <div className="flex min-h-svh items-center justify-center bg-[#111111]">
+        <span className="sr-only">Taking you to workspace setup</span>
+        <span className="size-5 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+      </div>
+    );
+  }
+
   return <DashboardShell />;
 }
 
 function DashboardShell() {
   const pathname = useLocation().pathname;
-  useAuth();
+  const { isLoaded } = useAuth();
+  const { organization } = useOrganization();
+  const { openUserProfile } = useClerk();
   const [plan, setPlan] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [showGettingStarted, setShowGettingStarted] = useState(true);
+  const [counts, setCounts] = useState({ monitors: 0, channels: 0, pages: 0, incidents: 0 });
 
   useEffect(() => {
+    if (!isLoaded || !organization) return;
     api("/api/billing/plan")
       .then((res) => res.json())
       .then((data) => setPlan(data.plan))
-      .catch(() => { });
+      .catch(() => {});
+
+    Promise.all([
+      api("/api/monitors").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+      api("/api/alert-channels").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+      api("/api/status-pages").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+      api("/api/incidents").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+    ]).then(([monitors, channels, pages, incidents]) => {
+      setCounts({
+        monitors: Array.isArray(monitors) ? monitors.length : 0,
+        channels: Array.isArray(channels) ? channels.length : 0,
+        pages: Array.isArray(pages) ? pages.length : 0,
+        incidents: Array.isArray(incidents) ? incidents.length : 0,
+      });
+    });
+  }, [isLoaded, organization?.id, pathname]);
+
+  useEffect(() => {
+    const handleExpired = () => {
+      window.location.href = "/login";
+    };
+    window.addEventListener("auth:expired", handleExpired);
+    return () => window.removeEventListener("auth:expired", handleExpired);
   }, []);
 
+  const onboardingSteps = [
+    { label: "Create your first monitor", href: "/monitors/new", completed: counts.monitors > 0 },
+    { label: "Configure alert channels", href: "/alert-channels", completed: counts.channels > 0 },
+    { label: "Create a status page", href: "/status-pages", completed: counts.pages > 0 },
+    { label: "Try incident management", href: "/incidents", completed: counts.incidents > 0 },
+  ];
+
+  const completedStepsCount = onboardingSteps.filter((s) => s.completed).length;
+  const progressPercent = Math.round((completedStepsCount / onboardingSteps.length) * 100);
   const isPro = plan === "pro";
 
   return (
-    <div className="flex h-svh max-h-svh overflow-hidden bg-[#f4f5f7] dark:bg-[#111111] font-sans text-sm text-foreground antialiased selection:bg-primary/20 transition-colors duration-300">
-      {/* Sidebar */}
+    <div className="flex h-svh max-h-svh overflow-hidden bg-[#09090b] font-sans text-sm text-foreground antialiased selection:bg-blue-500/20 transition-colors duration-300">
       <aside
         className={cn(
-          "flex shrink-0 flex-col transition-[width] duration-200 ease-linear select-none",
+          "flex shrink-0 flex-col bg-[#0f0f12] transition-[width] duration-200 ease-linear select-none border-r border-zinc-800/60",
           collapsed ? "w-[68px]" : "w-[260px]",
         )}
       >
-        {/* Logo + collapse */}
-        <div className={cn("flex items-center p-4", collapsed ? "justify-center" : "justify-between")}>
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Eye className="size-5" weight="bold" />
-          </div>
+        {/* Workspace Top Bar */}
+        <div className={cn("flex items-center p-3.5", collapsed ? "justify-center" : "justify-between")}>
           {!collapsed && (
-            <button
-              onClick={() => setCollapsed(true)}
-              className="flex size-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white hover:text-gray-700 dark:hover:bg-[#1a1a1a] dark:hover:text-gray-200"
-              aria-label="Collapse sidebar"
-            >
-              <SidebarSimple className="size-4" />
-            </button>
+            <div className="flex items-center gap-2 overflow-hidden">
+              <OrganizationSwitcher
+                hidePersonal
+                afterCreateOrganizationUrl="/"
+                afterSelectOrganizationUrl="/"
+                appearance={{
+                  elements: {
+                    rootBox: "w-full",
+                    organizationSwitcherTrigger:
+                      "w-full justify-between rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-zinc-100 hover:bg-zinc-800/60",
+                  },
+                }}
+              />
+            </div>
+          )}
+          {!collapsed && (
+            <div className="flex items-center gap-1">
+              <Link
+                to="/monitors/new"
+                className="flex size-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/60 text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
+                title="New Monitor"
+              >
+                <Plus className="size-3.5" />
+              </Link>
+              <button
+                onClick={() => setCollapsed(true)}
+                className="flex size-7 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
+                aria-label="Collapse sidebar"
+              >
+                <SidebarSimple className="size-4" />
+              </button>
+            </div>
           )}
         </div>
 
         {collapsed && (
           <button
             onClick={() => setCollapsed(false)}
-            className="mx-auto mb-2 flex size-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-white dark:hover:bg-[#1a1a1a]"
+            className="mx-auto mb-2 flex size-8 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
             aria-label="Expand sidebar"
           >
             <CaretRight className="size-4" />
           </button>
         )}
 
-        {/* Search */}
-        {!collapsed && (
-          <div className="px-4 pb-3">
-            <div className="relative">
-              <MagnifyingGlass className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Search..."
-                className="h-9 rounded-lg border-gray-200 bg-white pl-9 text-sm dark:border-[#2a2a2a] dark:bg-[#1a1a1a]"
-                readOnly
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Quick action */}
-        {!collapsed && (
-          <div className="px-4 pb-4">
-            <Link
-              to="/monitors/new"
-              className="flex items-center gap-2 text-sm font-medium text-primary transition hover:text-primary/80"
-            >
-              <Plus className="size-4" weight="bold" />
-              New monitor
-            </Link>
-          </div>
-        )}
-
-        {/* Nav */}
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3">
+        {/* Main Nav Items */}
+        <nav className="space-y-0.5 px-3 py-1">
           {navItems.map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href || pathname.startsWith(`${href}/`);
+            const isActive =
+              href === "/"
+                ? pathname === "/" || pathname === ""
+                : pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
                 key={href}
                 to={href}
                 title={collapsed ? label : undefined}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition",
+                  "flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs transition font-medium",
                   collapsed && "justify-center px-0",
                   isActive
-                    ? "bg-gray-200 font-medium text-gray-900 dark:bg-[#2a2a2a] dark:text-gray-50"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#1a1a1a] dark:hover:text-gray-50",
+                    ? "bg-zinc-800/80 font-semibold text-zinc-100 shadow-sm"
+                    : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200",
                 )}
               >
                 <Icon
-                  className={cn("size-4 shrink-0", isActive ? "text-primary" : "text-gray-400")}
-                  weight={isActive ? "fill" : "regular"}
+                  className={cn("size-4 shrink-0", isActive ? "text-zinc-100" : "text-zinc-400")}
+                  weight={isActive ? "bold" : "regular"}
                 />
                 {!collapsed && <span>{label}</span>}
               </Link>
@@ -147,25 +211,122 @@ function DashboardShell() {
           })}
         </nav>
 
-        {/* Footer: theme + user */}
-        <div className="mt-auto border-t border-gray-200/80 p-3 dark:border-[#2a2a2a]">
+        {/* Recent Section */}
+        {!collapsed && (
+          <div className="mt-4 px-3">
+            <div className="flex items-center justify-between px-2.5 py-1 text-xs font-semibold text-zinc-400">
+              <span>Recent</span>
+              <div className="flex items-center gap-1">
+                <button className="p-0.5 hover:text-zinc-200" title="Search">
+                  <MagnifyingGlass className="size-3.5" />
+                </button>
+                <button className="p-0.5 hover:text-zinc-200" title="Filter">
+                  <SlidersHorizontal className="size-3.5" />
+                </button>
+              </div>
+            </div>
+            <div className="px-2.5 py-2 text-xs text-zinc-500">No active alerts</div>
+          </div>
+        )}
+
+        {/* Argus Onboarding / Getting Started Widget */}
+        {!collapsed && showGettingStarted && (
+          <div className="mx-3 mt-auto mb-3 rounded-xl border border-zinc-800/80 bg-[#141417] p-3 text-xs">
+            <div className="flex items-center justify-between font-medium text-zinc-200">
+              <span>Getting started</span>
+              <button
+                onClick={() => setShowGettingStarted(false)}
+                className="text-zinc-500 hover:text-zinc-300"
+                title="Minimize"
+              >
+                <Minus className="size-3.5" />
+              </button>
+            </div>
+
+            {/* Dynamic Progress bar */}
+            <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-400">
+              <div className="h-1 flex-1 rounded-full bg-zinc-800 mr-2 overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span className="font-mono text-[10px]">{progressPercent}%</span>
+            </div>
+
+            {/* Checklist with Completed Checkmarks */}
+            <div className="mt-3 space-y-2 text-[11px]">
+              {onboardingSteps.map(({ label, href, completed }) => (
+                <Link
+                  key={label}
+                  to={href}
+                  className="flex items-center gap-2 text-zinc-400 hover:text-blue-400 transition"
+                >
+                  {completed ? (
+                    <CheckCircle className="size-3.5 text-emerald-400 shrink-0" weight="fill" />
+                  ) : (
+                    <Circle className="size-3.5 text-zinc-600 shrink-0" />
+                  )}
+                  <span className={cn("truncate", completed && "text-zinc-200 line-through opacity-80")}>
+                    {label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Options (Settings, Help, Resources) */}
+        {!collapsed && (
+          <div className="px-3 pb-2 space-y-0.5">
+            <button
+              onClick={() => openUserProfile()}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 font-medium text-left"
+            >
+              <Gear className="size-4 shrink-0" />
+              <span>Settings</span>
+            </button>
+            <a
+              href="#"
+              className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 font-medium"
+            >
+              <Question className="size-4 shrink-0" />
+              <span>Help</span>
+            </a>
+
+            {/* Resources (Active style with blue ring and blue dot as in reference) */}
+            <a
+              href="#"
+              className="flex items-center justify-between rounded-lg border border-blue-500/80 bg-blue-500/10 px-2.5 py-1.5 text-xs font-semibold text-blue-400 transition"
+            >
+              <div className="flex items-center gap-2.5">
+                <BookOpen className="size-4 shrink-0 text-blue-400" />
+                <span>Resources</span>
+              </div>
+              <span className="size-1.5 rounded-full bg-blue-400" />
+            </a>
+          </div>
+        )}
+
+        {/* Footer & User Profile */}
+        <div className="border-t border-zinc-800/80 p-3">
           <div className={cn("mb-2 flex", collapsed ? "justify-center" : "justify-end px-1")}>
             <ThemeSwitcher />
           </div>
           {!collapsed ? (
-            <UserDropdown plan={plan} isPro={isPro} />
+            <UserMenu plan={plan} isPro={isPro} />
           ) : (
             <div className="flex justify-center">
-              <Avatar size="sm" className="size-8 text-[10px]" />
+              <UserButton />
             </div>
           )}
         </div>
       </aside>
 
-      {/* Main panel */}
+      {/* Main Content Viewport */}
       <main className="min-h-0 flex-1 p-3 pl-0">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-zinc-800/80 bg-[#121215]">
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
             <Outlet />
           </div>
         </div>
@@ -174,45 +335,44 @@ function DashboardShell() {
   );
 }
 
-function UserDropdown({ plan, isPro }: { plan: string | null; isPro: boolean }) {
+function UserMenu({ plan, isPro }: { plan: string | null; isPro: boolean }) {
+  const { user } = useUser();
+  const { openUserProfile } = useClerk();
+  const displayName = user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? "User";
+
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition hover:bg-gray-50 dark:hover:bg-[#222] outline-none">
-        <Avatar size="sm" className="size-8 text-[10px]" />
+      <Dropdown.Trigger className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left outline-none transition hover:bg-zinc-800/60">
+        <UserButton />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">User</span>
+            <span className="truncate text-xs font-semibold text-zinc-100">
+              {displayName}
+            </span>
             {isPro && (
-              <Badge variant="light" color="green" size="sm" className="text-[10px] px-1.5 py-0">
+              <Badge variant="light" color="green" size="sm" className="px-1.5 py-0 text-[10px]">
                 PRO
               </Badge>
             )}
           </div>
-          <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+          <span className="truncate text-[11px] text-zinc-400">
             {plan ?? "free"} plan
           </span>
         </div>
-        <CaretDown className="size-3 shrink-0 text-gray-400" />
+        <CaretDown className="size-3 shrink-0 text-zinc-500" />
       </Dropdown.Trigger>
       <Dropdown.Content side="top" align="start" className="w-56">
         <Dropdown.Label>Account</Dropdown.Label>
         <Dropdown.Separator />
+        <Dropdown.Item onClick={() => openUserProfile()} className="flex items-center gap-2 cursor-pointer">
+          <Gear className="size-3.5" />
+          <span>Account Settings</span>
+        </Dropdown.Item>
         <Dropdown.Item asChild>
           <Link to="/billing" className="flex items-center gap-2">
             <CreditCard className="size-3.5" />
             <span>Billing & Plan</span>
           </Link>
-        </Dropdown.Item>
-        <Dropdown.Separator />
-        <Dropdown.Item
-          onSelect={async () => {
-            await api("/api/auth/logout", { method: "POST" });
-            window.location.href = "/login";
-          }}
-          className="text-error"
-        >
-          <SignOut className="size-3.5" />
-          <span>Sign Out</span>
         </Dropdown.Item>
       </Dropdown.Content>
     </Dropdown.Root>

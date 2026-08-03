@@ -67,11 +67,11 @@ function StatusPagesPage() {
         <form onSubmit={handleCreate} className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1 space-y-2">
             <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="My Status Page" className="h-11" />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="My Status Page" />
           </div>
           <div className="flex-1 space-y-2">
             <Label htmlFor="slug" className="text-gray-700 dark:text-gray-300">Slug</Label>
-            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required placeholder="my-status" className="h-11 font-mono" />
+            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required placeholder="my-status" className="font-sans" />
           </div>
           <Button type="submit" variant="primary" icon={Plus} loading={creating} className="font-normal">
             Create
@@ -89,7 +89,7 @@ function StatusPagesPage() {
             <div key={p.id} className={listCardClass}>
               <div>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-50">{p.name}</span>
-                <span className="ml-3 font-mono text-sm text-gray-500 dark:text-gray-400">/{p.slug}</span>
+                <span className="ml-3 font-sans text-sm text-gray-500 dark:text-gray-400">/{p.slug}</span>
               </div>
               <div className="flex items-center gap-1">
                 <a href={`/status/${p.slug}`} target="_blank" rel="noopener noreferrer"

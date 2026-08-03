@@ -1,9 +1,8 @@
 import { i as __toESM } from "../_runtime.mjs";
-import { u as require_react } from "./@floating-ui/react-dom+[...].mjs";
-import { o as require_jsx_runtime } from "./@radix-ui/react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react } from "./@clerk/react+[...].mjs";
 //#region node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var QueryClientContext = import_react.createContext(void 0);
 var QueryClientProvider = ({ client, children }) => {
 	import_react.useEffect(() => {

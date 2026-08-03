@@ -13,8 +13,8 @@ export function PageHeader({ icon: Icon, title, description, actions, className 
   return (
     <div className={cn("mb-8 flex items-start justify-between gap-4", className)}>
       <div className="flex gap-4">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-          <Icon className="size-5 text-primary" weight="fill" />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-500 dark:border-blue-400/20 dark:bg-blue-500/15 dark:text-blue-400">
+          <Icon className="size-4.5 text-blue-500 dark:text-blue-400" weight="fill" />
         </div>
         <div>
           <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">

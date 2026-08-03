@@ -73,11 +73,11 @@ function EditStatusPage() {
         <div className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="h-11" />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="slug" className="text-gray-700 dark:text-gray-300">Slug</Label>
-            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="h-11" />
+            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
           </div>
           <Button variant="primary" loading={saving} onClick={handleSave} className="w-full font-normal">
             Save changes <CaretRight className="size-3.5" weight="bold" />

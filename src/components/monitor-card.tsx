@@ -61,7 +61,7 @@ export function MonitorCard({
     "text-red-600";
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+    <div className="rounded-lg border border-gray-200 bg-white p-5 sm:p-6 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-3">

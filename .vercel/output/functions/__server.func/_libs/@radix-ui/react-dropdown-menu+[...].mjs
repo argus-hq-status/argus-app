@@ -1,11 +1,12 @@
 import { i as __toESM } from "../../_runtime.mjs";
-import { a as offset, c as useFloating, i as limitShift, l as require_react_dom, n as flip, o as shift, r as hide, s as size, t as arrow, u as require_react } from "../@floating-ui/react-dom+[...].mjs";
-import { a as useComposedRefs, i as createSlot, n as Primitive, o as require_jsx_runtime, r as dispatchDiscreteCustomEvent, t as Root$1 } from "./react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react, u as require_react_dom } from "../@clerk/react+[...].mjs";
 import { t as composeEventHandlers } from "../radix-ui__primitive.mjs";
+import { a as useComposedRefs, i as createSlot, n as Primitive, r as dispatchDiscreteCustomEvent, t as Root$1 } from "./react-arrow+[...].mjs";
 import { n as createContextScope, t as createCollection } from "./react-collection+[...].mjs";
 import { t as useDirection } from "../radix-ui__react-direction.mjs";
 import { i as useCallbackRef$1, n as DismissableLayer } from "./react-dismissable-layer+[...].mjs";
 import { n as autoUpdate } from "../@floating-ui/dom+[...].mjs";
+import { a as offset, c as useFloating, i as limitShift, n as flip, o as shift, r as hide, s as size, t as arrow } from "../floating-ui__react-dom.mjs";
 import { __assign, __rest, __spreadArray } from "tslib";
 //#region node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
@@ -98,7 +99,7 @@ function createFocusGuard() {
 }
 //#endregion
 //#region node_modules/@radix-ui/react-focus-scope/dist/index.mjs
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
 var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
 var EVENT_OPTIONS$1 = {

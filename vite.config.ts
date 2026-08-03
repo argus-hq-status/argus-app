@@ -21,6 +21,13 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({ srcDirectory: 'src' }),
     viteReact(),
-    nitro({ preset: 'vercel' }),
+    nitro({
+      preset: 'vercel',
+      routeRules: {
+        '/api/**': {
+          proxy: `${process.env.API_URL ?? 'http://localhost:4000'}/api/**`,
+        },
+      },
+    }),
   ],
 })

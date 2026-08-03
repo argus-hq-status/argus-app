@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { Monitor, Plus } from "@phosphor-icons/react";
+import { Monitor, Plus, MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from "~/components/ui/input";
 import { Badge } from "~/components/ui";
 import { Button, getButtonClassName } from "~/components/ui/button";
@@ -8,6 +8,13 @@ import { EmptyState } from "~/components/empty-state";
 import { DataTable } from "~/components/ui/data-table";
 import type { DataTableColumn } from "~/components/ui/data-table";
 import { PageHeader } from "~/components/page-header";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "~/components/ui/select";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
@@ -19,11 +26,18 @@ interface MonitorData {
   isActive: boolean;
 }
 
-const statusBadge: Record<string, { color: "green" | "red" | "gray"; variant: "light" | "stroke" }> = {
-  up: { color: "green", variant: "light" },
-  down: { color: "red", variant: "light" },
-  unknown: { color: "gray", variant: "stroke" },
+const STATUS_STYLES: Record<string, { color: "green" | "red" | "gray"; variant: "light" | "stroke"; label: string }> = {
+  up: { color: "green", variant: "light", label: "Up" },
+  down: { color: "red", variant: "light", label: "Down" },
+  unknown: { color: "gray", variant: "stroke", label: "Unknown" },
 };
+
+const STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "All statuses" },
+  { value: "up", label: "Up" },
+  { value: "down", label: "Down" },
+  { value: "unknown", label: "Unknown" },
+];
 
 export const Route = createFileRoute("/_dashboard/monitors/")({
   component: MonitorsPage,
@@ -35,6 +49,7 @@ function MonitorsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const load = useCallback(async () => {
     try {
@@ -52,18 +67,20 @@ function MonitorsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const filtered = monitors.filter((m) =>
-    m.name.toLowerCase().includes(search.toLowerCase()) ||
-    m.url.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = monitors.filter((m) => {
+    const matchesSearch =
+      m.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.url.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "all" || m.currentStatus === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const columns: DataTableColumn<MonitorData>[] = [
     {
       id: "name",
-      header: "NAME",
+      header: "Monitor",
       sortable: true,
       sortValue: (m) => m.name,
-      cellClassName: "font-mono text-xs",
       cell: (m) => (
         <Link
           to="/monitors/$id"
@@ -76,25 +93,38 @@ function MonitorsPage() {
     },
     {
       id: "url",
-      header: "URL",
+      header: "Endpoint",
       sortable: true,
       sortValue: (m) => m.url,
-      cellClassName: "font-mono text-xs text-gray-500 dark:text-gray-400",
-      cell: (m) => m.url,
+      cellClassName: "text-gray-500 dark:text-gray-400",
+      cell: (m) => (
+        <span className="max-w-[280px] truncate block">{m.url}</span>
+      ),
     },
     {
       id: "status",
-      header: "STATUS",
+      header: "Status",
       sortable: true,
       sortValue: (m) => m.currentStatus,
       cell: (m) => {
-        const badge = statusBadge[m.currentStatus] ?? { color: "gray", variant: "stroke" };
+        const style = STATUS_STYLES[m.currentStatus] ?? STATUS_STYLES.unknown;
         return (
-          <Badge variant={badge.variant} color={badge.color} size="sm">
-            {m.currentStatus}
+          <Badge variant={style.variant} color={style.color} size="sm">
+            {style.label}
           </Badge>
         );
       },
+    },
+    {
+      id: "active",
+      header: "Active",
+      sortable: true,
+      sortValue: (m) => (m.isActive ? 1 : 0),
+      cell: (m) => (
+        <span className={m.isActive ? "text-emerald-600" : "text-gray-400 dark:text-gray-500"}>
+          {m.isActive ? "Yes" : "No"}
+        </span>
+      ),
     },
   ];
 
@@ -128,28 +158,44 @@ function MonitorsPage() {
         columns={columns}
         getRowKey={(m) => m.id}
         pageSize={10}
-        height={480}
+        height={520}
         defaultSort={{ columnId: "name", direction: "asc" }}
         onRowClick={(m) => navigate({ to: "/monitors/$id", params: { id: m.id } })}
-        toolbar={
-          <Input
-            aria-label="Search monitors"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search monitors..."
-            className="h-10 w-full font-mono text-sm sm:w-80"
-          />
+        title={
+          <div className="relative">
+            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 dark:text-gray-500" />
+            <Input
+              aria-label="Search monitors"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search monitors…"
+              className="w-full pl-8 font-sans text-sm sm:w-[240px]"
+            />
+          </div>
         }
-        footer={
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {filtered.length} monitor{filtered.length === 1 ? "" : "s"}
-          </p>
+        toolbar={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="w-[160px]">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_FILTER_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         }
         emptyState={{
           title: monitors.length === 0 ? "No monitors yet" : "No matching monitors",
           description: monitors.length === 0
             ? "Create your first monitor to start tracking uptime."
-            : "Try a different search term.",
+            : "Try a different search term or adjust your filters.",
           action: monitors.length === 0
             ? (
               <Link to="/monitors/new">
