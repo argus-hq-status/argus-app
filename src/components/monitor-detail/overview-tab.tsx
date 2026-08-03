@@ -6,7 +6,6 @@ import {
   Pulse,
   Lightning,
   Gauge,
-  CaretDown,
 } from "@phosphor-icons/react";
 import {
   Select,
@@ -593,7 +592,7 @@ function RegionSummary({ checks, regions }: { checks: CheckData[]; regions: stri
 }
 
 /* ── Main Overview Tab ── */
-export function OverviewTab({ checks, regions, intervalSeconds }: OverviewTabProps) {
+export function OverviewTab({ checks, regions }: OverviewTabProps) {
   const stats = useMemo(() => {
     const total = checks.length;
     const up = checks.filter((c) => c.status === "up").length;

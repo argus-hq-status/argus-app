@@ -10,7 +10,6 @@ import {
 } from "@phosphor-icons/react";
 import { Badge } from "~/components/ui";
 import { Card } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
 import { DataTable } from "~/components/ui/data-table";
 import type { DataTableColumn } from "~/components/ui/data-table";
