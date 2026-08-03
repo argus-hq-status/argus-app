@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard.index'
@@ -27,7 +28,14 @@ import { Route as DashboardStatusPagesIdRouteImport } from './routes/_dashboard.
 import { Route as DashboardMonitorsNewRouteImport } from './routes/_dashboard.monitors.new'
 import { Route as DashboardMonitorsIdRouteImport } from './routes/_dashboard.monitors.$id'
 import { Route as DashboardIncidentsIdRouteImport } from './routes/_dashboard.incidents.$id'
+import { Route as AuthSignupSplatRouteImport } from './routes/_auth.signup.$'
+import { Route as AuthLoginSplatRouteImport } from './routes/_auth.login.$'
 
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => rootRouteImport,
@@ -117,17 +125,30 @@ const DashboardIncidentsIdRoute = DashboardIncidentsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => DashboardIncidentsRoute,
 } as any)
+const AuthSignupSplatRoute = AuthSignupSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => AuthSignupRoute,
+} as any)
+const AuthLoginSplatRoute = AuthLoginSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => AuthLoginRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
-  '/login': typeof AuthLoginRoute
-  '/signup': typeof AuthSignupRoute
+  '/onboarding': typeof OnboardingRoute
+  '/login': typeof AuthLoginRouteWithChildren
+  '/signup': typeof AuthSignupRouteWithChildren
   '/alert-channels': typeof DashboardAlertChannelsRoute
   '/billing': typeof DashboardBillingRoute
   '/incidents': typeof DashboardIncidentsRouteWithChildren
   '/monitors': typeof DashboardMonitorsRouteWithChildren
   '/status-pages': typeof DashboardStatusPagesRouteWithChildren
   '/status/$slug': typeof StatusSlugRoute
+  '/login/$': typeof AuthLoginSplatRoute
+  '/signup/$': typeof AuthSignupSplatRoute
   '/incidents/$id': typeof DashboardIncidentsIdRoute
   '/monitors/$id': typeof DashboardMonitorsIdRoute
   '/monitors/new': typeof DashboardMonitorsNewRoute
@@ -138,11 +159,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
-  '/login': typeof AuthLoginRoute
-  '/signup': typeof AuthSignupRoute
+  '/onboarding': typeof OnboardingRoute
+  '/login': typeof AuthLoginRouteWithChildren
+  '/signup': typeof AuthSignupRouteWithChildren
   '/alert-channels': typeof DashboardAlertChannelsRoute
   '/billing': typeof DashboardBillingRoute
   '/status/$slug': typeof StatusSlugRoute
+  '/login/$': typeof AuthLoginSplatRoute
+  '/signup/$': typeof AuthSignupSplatRoute
   '/incidents/$id': typeof DashboardIncidentsIdRoute
   '/monitors/$id': typeof DashboardMonitorsIdRoute
   '/monitors/new': typeof DashboardMonitorsNewRoute
@@ -155,8 +179,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_dashboard': typeof DashboardRouteWithChildren
-  '/_auth/login': typeof AuthLoginRoute
-  '/_auth/signup': typeof AuthSignupRoute
+  '/onboarding': typeof OnboardingRoute
+  '/_auth/login': typeof AuthLoginRouteWithChildren
+  '/_auth/signup': typeof AuthSignupRouteWithChildren
   '/_dashboard/alert-channels': typeof DashboardAlertChannelsRoute
   '/_dashboard/billing': typeof DashboardBillingRoute
   '/_dashboard/incidents': typeof DashboardIncidentsRouteWithChildren
@@ -164,6 +189,8 @@ export interface FileRoutesById {
   '/_dashboard/status-pages': typeof DashboardStatusPagesRouteWithChildren
   '/status/$slug': typeof StatusSlugRoute
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_auth/login/$': typeof AuthLoginSplatRoute
+  '/_auth/signup/$': typeof AuthSignupSplatRoute
   '/_dashboard/incidents/$id': typeof DashboardIncidentsIdRoute
   '/_dashboard/monitors/$id': typeof DashboardMonitorsIdRoute
   '/_dashboard/monitors/new': typeof DashboardMonitorsNewRoute
@@ -176,6 +203,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/onboarding'
     | '/login'
     | '/signup'
     | '/alert-channels'
@@ -184,6 +212,8 @@ export interface FileRouteTypes {
     | '/monitors'
     | '/status-pages'
     | '/status/$slug'
+    | '/login/$'
+    | '/signup/$'
     | '/incidents/$id'
     | '/monitors/$id'
     | '/monitors/new'
@@ -194,11 +224,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/onboarding'
     | '/login'
     | '/signup'
     | '/alert-channels'
     | '/billing'
     | '/status/$slug'
+    | '/login/$'
+    | '/signup/$'
     | '/incidents/$id'
     | '/monitors/$id'
     | '/monitors/new'
@@ -210,6 +243,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_dashboard'
+    | '/onboarding'
     | '/_auth/login'
     | '/_auth/signup'
     | '/_dashboard/alert-channels'
@@ -219,6 +253,8 @@ export interface FileRouteTypes {
     | '/_dashboard/status-pages'
     | '/status/$slug'
     | '/_dashboard/'
+    | '/_auth/login/$'
+    | '/_auth/signup/$'
     | '/_dashboard/incidents/$id'
     | '/_dashboard/monitors/$id'
     | '/_dashboard/monitors/new'
@@ -231,11 +267,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
+  OnboardingRoute: typeof OnboardingRoute
   StatusSlugRoute: typeof StatusSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
@@ -362,17 +406,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIncidentsIdRouteImport
       parentRoute: typeof DashboardIncidentsRoute
     }
+    '/_auth/signup/$': {
+      id: '/_auth/signup/$'
+      path: '/$'
+      fullPath: '/signup/$'
+      preLoaderRoute: typeof AuthSignupSplatRouteImport
+      parentRoute: typeof AuthSignupRoute
+    }
+    '/_auth/login/$': {
+      id: '/_auth/login/$'
+      path: '/$'
+      fullPath: '/login/$'
+      preLoaderRoute: typeof AuthLoginSplatRouteImport
+      parentRoute: typeof AuthLoginRoute
+    }
   }
 }
 
+interface AuthLoginRouteChildren {
+  AuthLoginSplatRoute: typeof AuthLoginSplatRoute
+}
+
+const AuthLoginRouteChildren: AuthLoginRouteChildren = {
+  AuthLoginSplatRoute: AuthLoginSplatRoute,
+}
+
+const AuthLoginRouteWithChildren = AuthLoginRoute._addFileChildren(
+  AuthLoginRouteChildren,
+)
+
+interface AuthSignupRouteChildren {
+  AuthSignupSplatRoute: typeof AuthSignupSplatRoute
+}
+
+const AuthSignupRouteChildren: AuthSignupRouteChildren = {
+  AuthSignupSplatRoute: AuthSignupSplatRoute,
+}
+
+const AuthSignupRouteWithChildren = AuthSignupRoute._addFileChildren(
+  AuthSignupRouteChildren,
+)
+
 interface AuthRouteChildren {
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthSignupRoute: typeof AuthSignupRoute
+  AuthLoginRoute: typeof AuthLoginRouteWithChildren
+  AuthSignupRoute: typeof AuthSignupRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginRoute: AuthLoginRoute,
-  AuthSignupRoute: AuthSignupRoute,
+  AuthLoginRoute: AuthLoginRouteWithChildren,
+  AuthSignupRoute: AuthSignupRouteWithChildren,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -443,6 +525,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  OnboardingRoute: OnboardingRoute,
   StatusSlugRoute: StatusSlugRoute,
 }
 export const routeTree = rootRouteImport
@@ -450,10 +533,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

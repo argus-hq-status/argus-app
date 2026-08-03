@@ -1,1 +1,0 @@
-var e={}.API_URL??`http://localhost:4000`;function t(t,n){return fetch(`${e}${t}`,{...n,credentials:`include`}).then(e=>(e.status===401&&!t.includes(`/auth/`)&&window.dispatchEvent(new CustomEvent(`auth:expired`)),e))}export{t};

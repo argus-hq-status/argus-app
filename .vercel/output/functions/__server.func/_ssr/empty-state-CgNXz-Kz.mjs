@@ -1,10 +1,9 @@
 import { i as __toESM } from "../_runtime.mjs";
-import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
-import { o as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react } from "../_libs/@clerk/react+[...].mjs";
 import { t as cn } from "./utils-C_uf36nf.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/empty-state-CgNXz-Kz.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime());
 function EmptyStateServerIllustration({ className }) {
 	const uid = (0, import_react.useId)().replace(/:/g, "");
 	const glassGradientId = `server-glass-${uid}`;

@@ -113,22 +113,22 @@ export function DataTable<T>({
   const resolvedHeight = typeof height === "number" ? `${height}px` : height;
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-4", className)}>
       {title || toolbar ? (
         <div
           className={cn(
-            "flex flex-col gap-3 lg:flex-row lg:items-center",
+            "flex flex-col gap-3 lg:flex-row lg:items-end",
             title ? "lg:justify-between" : "lg:justify-end",
           )}
         >
           {title ? <div>{title}</div> : null}
-          {toolbar ? <div className="w-full lg:flex-1 lg:max-w-md">{toolbar}</div> : null}
+          {toolbar ? <div className="w-full lg:w-auto">{toolbar}</div> : null}
         </div>
       ) : null}
 
       <div
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-[#2a2a2a] dark:bg-[#141414]",
+          "relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-[#2a2a2a] dark:bg-[#141414]",
           showEmptyState ? "h-auto" : undefined,
         )}
         style={showEmptyState ? undefined : { height: resolvedHeight }}
@@ -138,14 +138,14 @@ export function DataTable<T>({
             showEmptyState ? "overflow-hidden" : "min-h-0 flex-1 overflow-y-auto pb-12",
           )}
         >
-          <table className="w-full caption-bottom font-mono text-xs">
+          <table className="w-full caption-bottom font-sans text-sm">
             <TableHeader className="sticky top-0 z-10 border-b border-gray-200 bg-gray-50 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]">
               <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-[#2a2a2a]">
                 {columns.map((column) => (
                   <TableHead
                     key={column.id}
                     className={cn(
-                      "h-9 px-4 text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400",
+                      "h-10 px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400",
                       column.headerClassName,
                     )}
                   >
@@ -222,7 +222,7 @@ export function DataTable<T>({
         >
           <div className="flex items-center gap-4">
             {footer}
-            <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
+            <p className="font-sans text-sm text-gray-500 dark:text-gray-400">
               pg {currentPage}/{totalPages}
             </p>
           </div>

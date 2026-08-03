@@ -1,7 +1,7 @@
 import { i as __toESM } from "../../_runtime.mjs";
-import { l as require_react_dom, u as require_react } from "../@floating-ui/react-dom+[...].mjs";
-import { a as useComposedRefs, i as createSlot, n as Primitive, o as require_jsx_runtime } from "./react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react, u as require_react_dom } from "../@clerk/react+[...].mjs";
 import { t as composeEventHandlers } from "../radix-ui__primitive.mjs";
+import { a as useComposedRefs, i as createSlot, n as Primitive } from "./react-arrow+[...].mjs";
 import { n as createContextScope, t as createCollection } from "./react-collection+[...].mjs";
 import { _ as useId, b as useControllableState, c as ReactRemoveScroll, d as Portal, f as Anchor, g as createPopperScope, h as Root2, l as hideOthers, m as Content, p as Arrow, u as Presence, v as FocusScope, x as useLayoutEffect2, y as useFocusGuards } from "./react-dropdown-menu+[...].mjs";
 import { t as useDirection } from "../radix-ui__react-direction.mjs";
@@ -10,7 +10,7 @@ import { t as clamp } from "../radix-ui__number.mjs";
 //#region node_modules/@radix-ui/react-visually-hidden/dist/index.mjs
 var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var VISUALLY_HIDDEN_STYLES = Object.freeze({
 	position: "absolute",
 	border: 0,

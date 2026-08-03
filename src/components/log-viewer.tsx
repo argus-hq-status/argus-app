@@ -15,7 +15,7 @@ const statusColor: Record<string, string> = {
 export function LogViewer({ entries }: { entries: LogEntry[] }) {
   if (entries.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-800 bg-[#0d0d0d] px-4 py-8 text-center font-mono text-sm text-gray-500">
+      <div className="rounded-xl border border-gray-800 bg-[#0d0d0d] px-4 py-8 text-center font-sans text-sm text-gray-500">
         // no checks recorded yet
       </div>
     );
@@ -23,7 +23,7 @@ export function LogViewer({ entries }: { entries: LogEntry[] }) {
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-800 bg-[#0d0d0d]">
-      <div className="max-h-[420px] overflow-y-auto p-4 font-mono text-xs leading-relaxed">
+      <div className="max-h-[420px] overflow-y-auto p-4 font-sans text-xs leading-relaxed">
         {entries.map((entry) => {
           const ts = new Date(entry.checkedAt).toISOString();
           const statusCls = statusColor[entry.status] ?? "text-gray-400";

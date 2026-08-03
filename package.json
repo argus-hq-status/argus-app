@@ -13,6 +13,7 @@
     "start": "vite preview"
   },
   "dependencies": {
+    "@clerk/tanstack-react-start": "^1.4.25",
     "@cloudflare/kumo": "^2.7.0",
     "@number-flow/react": "^0.6.1",
     "@phosphor-icons/react": "^2.1.10",

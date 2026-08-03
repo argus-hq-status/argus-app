@@ -1,7 +1,7 @@
 import { i as __toESM } from "../../_runtime.mjs";
-import { u as require_react } from "../@floating-ui/react-dom+[...].mjs";
-import { a as useComposedRefs, n as Primitive, o as require_jsx_runtime, r as dispatchDiscreteCustomEvent } from "./react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react } from "../@clerk/react+[...].mjs";
 import { t as composeEventHandlers } from "../radix-ui__primitive.mjs";
+import { a as useComposedRefs, n as Primitive, r as dispatchDiscreteCustomEvent } from "./react-arrow+[...].mjs";
 //#region node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 function useCallbackRef(callback) {
@@ -13,7 +13,7 @@ function useCallbackRef(callback) {
 }
 //#endregion
 //#region node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var DISMISSABLE_LAYER_NAME = "DismissableLayer";
 var CONTEXT_UPDATE = "dismissableLayer.update";
 var POINTER_DOWN_OUTSIDE = "dismissableLayer.pointerDownOutside";

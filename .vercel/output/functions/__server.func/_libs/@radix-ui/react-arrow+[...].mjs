@@ -1,46 +1,7 @@
-import { i as __toESM, t as __commonJSMin } from "../../_runtime.mjs";
-import { l as require_react_dom, u as require_react } from "../@floating-ui/react-dom+[...].mjs";
-//#region node_modules/react/cjs/react-jsx-runtime.production.js
-/**
-* @license React
-* react-jsx-runtime.production.js
-*
-* Copyright (c) Meta Platforms, Inc. and affiliates.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-var require_react_jsx_runtime_production = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element");
-	var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
-	function jsxProd(type, config, maybeKey) {
-		var key = null;
-		void 0 !== maybeKey && (key = "" + maybeKey);
-		void 0 !== config.key && (key = "" + config.key);
-		if ("key" in config) {
-			maybeKey = {};
-			for (var propName in config) "key" !== propName && (maybeKey[propName] = config[propName]);
-		} else maybeKey = config;
-		config = maybeKey.ref;
-		return {
-			$$typeof: REACT_ELEMENT_TYPE,
-			type,
-			key,
-			ref: void 0 !== config ? config : null,
-			props: maybeKey
-		};
-	}
-	exports.Fragment = REACT_FRAGMENT_TYPE;
-	exports.jsx = jsxProd;
-	exports.jsxs = jsxProd;
-}));
-//#endregion
-//#region node_modules/react/jsx-runtime.js
-var require_jsx_runtime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	module.exports = require_react_jsx_runtime_production();
-}));
-//#endregion
+import { i as __toESM } from "../../_runtime.mjs";
+import { d as require_jsx_runtime, f as require_react, u as require_react_dom } from "../@clerk/react+[...].mjs";
 //#region node_modules/@radix-ui/react-compose-refs/dist/index.mjs
+var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 function setRef(ref, value) {
 	if (typeof ref === "function") return ref(value);
@@ -68,7 +29,6 @@ function useComposedRefs(...refs) {
 }
 //#endregion
 //#region node_modules/@radix-ui/react-slot/dist/index.mjs
-var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 // @__NO_SIDE_EFFECTS__
 function createSlot(ownerName) {
 	const Slot2 = import_react.forwardRef((props, forwardedRef) => {
@@ -162,7 +122,7 @@ var createSlottableError = (ownerName) => {
 var use = import_react[" use ".trim().toString()];
 //#endregion
 //#region node_modules/@radix-ui/react-primitive/dist/index.mjs
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var Primitive = [
 	"a",
 	"button",
@@ -219,4 +179,4 @@ var Arrow = import_react.forwardRef((props, forwardedRef) => {
 Arrow.displayName = NAME;
 var Root = Arrow;
 //#endregion
-export { useComposedRefs as a, createSlot as i, Primitive as n, require_jsx_runtime as o, dispatchDiscreteCustomEvent as r, Root as t };
+export { useComposedRefs as a, createSlot as i, Primitive as n, dispatchDiscreteCustomEvent as r, Root as t };

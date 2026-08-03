@@ -1,21 +1,14 @@
-import { n as __exportAll } from "../_runtime.mjs";
-import { o as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
-import { A as parseRedirect, C as getScriptPreloadAttrs, D as executeRewriteInput, E as resolveManifestCssLink, F as invariant, M as rootRouteId, N as isNotFound, O as isRedirect, T as resolveManifestAssetLink, a as replaceSsrResponse, i as normalizeSsrResponse, k as isResolvedRedirect, n as defineHandlerCallback, o as stripSsrResponseBody, r as isSsrResponse, t as renderRouterToStream, u as RouterProvider, w as getStylesheetHref } from "../_libs/@tanstack/react-router+[...].mjs";
+import { i as __toESM } from "../_runtime.mjs";
+import { n as runWithStartContext, t as getStartContext } from "./async-local-storage-C5fJChCT.mjs";
+import { d as require_jsx_runtime } from "../_libs/@clerk/react+[...].mjs";
+import { A as isResolvedRedirect, D as resolveManifestCssLink, E as resolveManifestAssetLink, I as invariant, N as rootRouteId, O as executeRewriteInput, P as isNotFound, T as getStylesheetHref, a as replaceSsrResponse, i as normalizeSsrResponse, j as parseRedirect, k as isRedirect, n as defineHandlerCallback, o as stripSsrResponseBody, r as isSsrResponse, t as renderRouterToStream, u as RouterProvider, w as getScriptPreloadAttrs } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as createMemoryHistory } from "../_libs/tanstack__history.mjs";
 import { a as defaultSerovalPlugins, c as makeSerovalPlugin, d as lu, i as getOrigin, l as Ou, n as attachRouterServerSsrUtils, o as createRawStreamRPCPlugin, r as getNormalizedURL, s as createSerializationAdapter, t as mergeHeaders, u as cu } from "../_libs/@tanstack/router-core+[...].mjs";
+import { t as createMiddleware } from "./createMiddleware-B_4t7rW1.mjs";
 import { n as toResponse, t as H3Event } from "../_libs/h3-v2+rou3.mjs";
 import { AsyncLocalStorage } from "node:async_hooks";
 //#region node_modules/.nitro/vite/services/ssr/index.js
-var ssr_exports = /* @__PURE__ */ __exportAll({
-	a: () => setResponseHeader,
-	createServerEntry: () => createServerEntry,
-	default: () => server_default,
-	i: () => getRequest,
-	n: () => TSS_SERVER_FUNCTION,
-	r: () => getServerFnById,
-	t: () => createServerFn
-});
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime());
 function StartServer(props) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RouterProvider, { router: props.router });
 }
@@ -26,9 +19,9 @@ var defaultStreamHandler = defineHandlerCallback(({ request, router, responseHea
 	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StartServer, { router })
 }));
 var GLOBAL_EVENT_STORAGE_KEY = Symbol.for("tanstack-start:event-storage");
-var globalObj$1 = globalThis;
-if (!globalObj$1[GLOBAL_EVENT_STORAGE_KEY]) globalObj$1[GLOBAL_EVENT_STORAGE_KEY] = new AsyncLocalStorage();
-var eventStorage = globalObj$1[GLOBAL_EVENT_STORAGE_KEY];
+var globalObj = globalThis;
+if (!globalObj[GLOBAL_EVENT_STORAGE_KEY]) globalObj[GLOBAL_EVENT_STORAGE_KEY] = new AsyncLocalStorage();
+var eventStorage = globalObj[GLOBAL_EVENT_STORAGE_KEY];
 function isPromiseLike(value) {
 	return typeof value.then === "function";
 }
@@ -75,16 +68,6 @@ function getH3Event() {
 	if (!event) throw new Error(`No StartEvent found in AsyncLocalStorage. Make sure you are using the function within the server runtime.`);
 	return event.h3Event;
 }
-function getRequest() {
-	return getH3Event().req;
-}
-function setResponseHeader(name, value) {
-	const event = getH3Event();
-	if (Array.isArray(value)) {
-		event.res.headers.delete(name);
-		for (const valueItem of value) event.res.headers.append(name, valueItem);
-	} else event.res.headers.set(name, value);
-}
 function getResponse() {
 	return getH3Event().res;
 }
@@ -99,7 +82,7 @@ var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-Biz-xfTR.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-CruzkfBq.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -119,17 +102,13 @@ async function getStartManifest(matchedRoutes) {
 	};
 }
 var manifest = {
-	"951028818af468a008112a7c841feab5ee472bc717d82919dd978a1f347d67e2": {
-		functionName: "signupFn_createServerFn_handler",
-		importer: () => import("./auth-context-B4KLTF0R.mjs")
+	"377d0433c409d68caaeac973cf7a6fd58128b3d4232d68500d5eba3f0e794fe7": {
+		functionName: "redirectIfAuthenticatedFn_createServerFn_handler",
+		importer: () => import("./auth-server-C9Yv7syL.mjs")
 	},
-	"95d26c1b0a20b137344ffd461496e37764cc42568d688c57be735786b73eb262": {
-		functionName: "getSession_createServerFn_handler",
-		importer: () => import("./auth-context-B4KLTF0R.mjs")
-	},
-	"bc06f65f5db61dc8755a1a930240cacd3296328b4ab4ca88397a7404ac6dd98d": {
-		functionName: "loginFn_createServerFn_handler",
-		importer: () => import("./auth-context-B4KLTF0R.mjs")
+	"ba401ea0f2847a84b6536851f081e536431c54fccfee62aefa6ce8d6186569c9": {
+		functionName: "requireAuthFn_createServerFn_handler",
+		importer: () => import("./auth-server-C9Yv7syL.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -187,18 +166,6 @@ function createNullProtoObject(source) {
 	const obj = Object.create(null);
 	for (const key of Object.keys(source)) if (isSafeKey(key)) obj[key] = source[key];
 	return obj;
-}
-var GLOBAL_STORAGE_KEY = Symbol.for("tanstack-start:start-storage-context");
-var globalObj = globalThis;
-if (!globalObj[GLOBAL_STORAGE_KEY]) globalObj[GLOBAL_STORAGE_KEY] = new AsyncLocalStorage();
-var startStorage = globalObj[GLOBAL_STORAGE_KEY];
-async function runWithStartContext(context, fn) {
-	return startStorage.run(context, fn);
-}
-function getStartContext(opts) {
-	const context = startStorage.getStore();
-	if (!context && opts?.throwIfNotFound !== false) throw new Error(`No Start context found in AsyncLocalStorage. Make sure you are using the function within the server runtime.`);
-	return context;
 }
 var getStartOptions = () => getStartContext().startOptions;
 var getStartContextServerOnly = getStartContext;
@@ -396,32 +363,6 @@ function serverFnBaseToMiddleware(options) {
 		}
 	};
 }
-var createMiddleware = (options, __opts) => {
-	const resolvedOptions = {
-		type: "request",
-		...__opts || options
-	};
-	const setValidator = (validator) => {
-		return createMiddleware({}, Object.assign(resolvedOptions, {
-			validator,
-			inputValidator: validator
-		}));
-	};
-	return {
-		options: resolvedOptions,
-		middleware: (middleware) => {
-			return createMiddleware({}, Object.assign(resolvedOptions, { middleware }));
-		},
-		validator: setValidator,
-		inputValidator: setValidator,
-		client: (client) => {
-			return createMiddleware({}, Object.assign(resolvedOptions, { client }));
-		},
-		server: (server) => {
-			return createMiddleware({}, Object.assign(resolvedOptions, { server }));
-		}
-	};
-};
 var innerCreateCsrfMiddleware = (opts = {}) => {
 	return createMiddleware().server(async (ctx) => {
 		const csrfCtx = ctx;
@@ -1399,8 +1340,8 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-BWv7JAfI.mjs"),
-		import("./start-5Z2QO8AU.mjs"),
+		import("./router-DBeN-P4F.mjs"),
+		import("./start-B6asKlCr.mjs"),
 		import("./empty-plugin-adapters-D9UWiqvJ.mjs")
 	]);
 	return {
@@ -1784,4 +1725,4 @@ function createServerEntry(entry) {
 }
 var server_default = createServerEntry({ fetch });
 //#endregion
-export { setResponseHeader as a, getServerFnById as i, createServerFn as n, ssr_exports as o, getRequest as r, TSS_SERVER_FUNCTION as t };
+export { createServerEntry, server_default as default, TSS_SERVER_FUNCTION as n, getServerFnById as r, createServerFn as t };

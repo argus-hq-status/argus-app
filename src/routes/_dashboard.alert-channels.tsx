@@ -98,7 +98,7 @@ function AlertChannelsPage() {
           </div>
           <div className="flex-1 space-y-2">
             <Label htmlFor="target" className="text-gray-700 dark:text-gray-300">Target</Label>
-            <Input id="target" value={target} onChange={(e) => setTarget(e.target.value)} placeholder="email or webhook URL" required className="h-11" />
+            <Input id="target" value={target} onChange={(e) => setTarget(e.target.value)} placeholder="email or webhook URL" required />
           </div>
           <Button type="submit" variant="primary" icon={Plus} loading={adding} className="font-normal">
             Add

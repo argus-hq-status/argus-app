@@ -1,7 +1,7 @@
 import { i as __toESM } from "../_runtime.mjs";
-import { l as require_react_dom, u as require_react } from "./@floating-ui/react-dom+[...].mjs";
-import { a as useComposedRefs, n as Primitive, o as require_jsx_runtime, r as dispatchDiscreteCustomEvent } from "./@radix-ui/react-arrow+[...].mjs";
+import { d as require_jsx_runtime, f as require_react, u as require_react_dom } from "./@clerk/react+[...].mjs";
 import { t as composeEventHandlers } from "./radix-ui__primitive.mjs";
+import { a as useComposedRefs, n as Primitive, r as dispatchDiscreteCustomEvent } from "./@radix-ui/react-arrow+[...].mjs";
 import { n as createContextScope, t as createCollection } from "./@radix-ui/react-collection+[...].mjs";
 import { b as useControllableState, d as Portal, u as Presence, x as useLayoutEffect2 } from "./@radix-ui/react-dropdown-menu+[...].mjs";
 import { i as useCallbackRef, r as Root, t as Branch } from "./@radix-ui/react-dismissable-layer+[...].mjs";
@@ -9,7 +9,7 @@ import { p as VisuallyHidden } from "./@radix-ui/react-select+[...].mjs";
 //#region node_modules/@radix-ui/react-toast/dist/index.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
-var import_jsx_runtime = require_jsx_runtime();
+var import_jsx_runtime = /* @__PURE__ */ __toESM(require_jsx_runtime(), 1);
 var PROVIDER_NAME = "ToastProvider";
 var [Collection, useCollection, createCollectionScope] = createCollection("Toast");
 var [createToastContext, createToastScope] = createContextScope("Toast", [createCollectionScope]);
