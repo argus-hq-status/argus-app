@@ -7,9 +7,9 @@ import {
   StackSimple,
   Bell,
   CreditCard,
-  Plus,
   CaretRight,
   CaretDown,
+  CaretUp,
   MagnifyingGlass,
   SidebarSimple,
   Gear,
@@ -130,13 +130,13 @@ function DashboardShell() {
       <aside
         className={cn(
           "flex shrink-0 flex-col bg-[#0f0f12] transition-[width] duration-200 ease-linear select-none border-r border-zinc-800/60",
-          collapsed ? "w-[68px]" : "w-[260px]",
+          collapsed ? "w-17" : "w-65",
         )}
       >
         {/* Workspace Top Bar */}
         <div className={cn("flex items-center p-3.5", collapsed ? "justify-center" : "justify-between")}>
           {!collapsed && (
-            <div className="flex items-center gap-2 overflow-hidden">
+            <div className="relative min-w-0 flex-1 overflow-hidden pr-1">
               <OrganizationSwitcher
                 hidePersonal
                 afterCreateOrganizationUrl="/"
@@ -145,29 +145,35 @@ function DashboardShell() {
                   elements: {
                     rootBox: "w-full",
                     organizationSwitcherTrigger:
-                      "w-full justify-between rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-zinc-100 hover:bg-zinc-800/60",
+                      "w-full justify-between rounded-lg border-0 bg-transparent py-1 pl-1 pr-8 text-sm font-semibold !text-zinc-100 hover:bg-zinc-800/60 [&_*]:!text-zinc-100",
+                    organizationSwitcherTriggerIcon: "hidden",
+                    organizationSwitcherTrigger__organizationName:
+                      "!text-zinc-100",
+                    organizationSwitcherTriggerOrganizationPreviewName:
+                      "!text-zinc-100",
+                    organizationSwitcherTriggerOrganizationPreviewTextContainer:
+                      "!text-zinc-100",
+                    organizationPreviewMainIdentifier: "!text-zinc-100",
+                    organizationPreviewSecondaryIdentifier: "!text-zinc-400",
+                    organizationSwitcherPopoverCard: "border border-zinc-800 bg-[#18181b] text-zinc-100",
+                    organizationSwitcherPopoverActionButton: "text-zinc-100 hover:bg-zinc-800",
                   },
                 }}
               />
+              <span className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 flex-col text-zinc-400">
+                <CaretUp className="size-2.5" weight="fill" />
+                <CaretDown className="-mt-1 size-2.5" weight="fill" />
+              </span>
             </div>
           )}
           {!collapsed && (
-            <div className="flex items-center gap-1">
-              <Link
-                to="/monitors/new"
-                className="flex size-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/60 text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
-                title="New Monitor"
-              >
-                <Plus className="size-3.5" />
-              </Link>
-              <button
-                onClick={() => setCollapsed(true)}
-                className="flex size-7 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
-                aria-label="Collapse sidebar"
-              >
-                <SidebarSimple className="size-4" />
-              </button>
-            </div>
+            <button
+              onClick={() => setCollapsed(true)}
+              className="ml-1 flex size-7 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
+              aria-label="Collapse sidebar"
+            >
+              <SidebarSimple className="size-4" />
+            </button>
           )}
         </div>
 
@@ -231,7 +237,7 @@ function DashboardShell() {
 
         {/* Argus Onboarding / Getting Started Widget */}
         {!collapsed && showGettingStarted && (
-          <div className="mx-3 mt-auto mb-3 rounded-xl border border-zinc-800/80 bg-[#141417] p-3 text-xs">
+          <div className="mx-3 mt-4 mb-3 rounded-xl border border-zinc-800/80 bg-[#141417] p-3 text-xs">
             <div className="flex items-center justify-between font-medium text-zinc-200">
               <span>Getting started</span>
               <button
@@ -309,7 +315,7 @@ function DashboardShell() {
         )}
 
         {/* Footer & User Profile */}
-        <div className="border-t border-zinc-800/80 p-3">
+        <div className="mt-auto shrink-0 border-t border-zinc-800/80 p-3">
           <div className={cn("mb-2 flex", collapsed ? "justify-center" : "justify-end px-1")}>
             <ThemeSwitcher />
           </div>
@@ -324,8 +330,8 @@ function DashboardShell() {
       </aside>
 
       {/* Main Content Viewport */}
-      <main className="min-h-0 flex-1 p-3 pl-0">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-zinc-800/80 bg-[#121215]">
+      <main className="min-h-0 flex-1 pl-0">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[#121215]">
           <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
             <Outlet />
           </div>

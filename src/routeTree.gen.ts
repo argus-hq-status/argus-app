@@ -30,6 +30,7 @@ import { Route as DashboardMonitorsIdRouteImport } from './routes/_dashboard.mon
 import { Route as DashboardIncidentsIdRouteImport } from './routes/_dashboard.incidents.$id'
 import { Route as AuthSignupSplatRouteImport } from './routes/_auth.signup.$'
 import { Route as AuthLoginSplatRouteImport } from './routes/_auth.login.$'
+import { Route as StatusSlugIncidentsIdRouteImport } from './routes/status.$slug.incidents.$id'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -135,6 +136,11 @@ const AuthLoginSplatRoute = AuthLoginSplatRouteImport.update({
   path: '/$',
   getParentRoute: () => AuthLoginRoute,
 } as any)
+const StatusSlugIncidentsIdRoute = StatusSlugIncidentsIdRouteImport.update({
+  id: '/incidents/$id',
+  path: '/incidents/$id',
+  getParentRoute: () => StatusSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
@@ -146,7 +152,7 @@ export interface FileRoutesByFullPath {
   '/incidents': typeof DashboardIncidentsRouteWithChildren
   '/monitors': typeof DashboardMonitorsRouteWithChildren
   '/status-pages': typeof DashboardStatusPagesRouteWithChildren
-  '/status/$slug': typeof StatusSlugRoute
+  '/status/$slug': typeof StatusSlugRouteWithChildren
   '/login/$': typeof AuthLoginSplatRoute
   '/signup/$': typeof AuthSignupSplatRoute
   '/incidents/$id': typeof DashboardIncidentsIdRoute
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/incidents/': typeof DashboardIncidentsIndexRoute
   '/monitors/': typeof DashboardMonitorsIndexRoute
   '/status-pages/': typeof DashboardStatusPagesIndexRoute
+  '/status/$slug/incidents/$id': typeof StatusSlugIncidentsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
@@ -164,7 +171,7 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRouteWithChildren
   '/alert-channels': typeof DashboardAlertChannelsRoute
   '/billing': typeof DashboardBillingRoute
-  '/status/$slug': typeof StatusSlugRoute
+  '/status/$slug': typeof StatusSlugRouteWithChildren
   '/login/$': typeof AuthLoginSplatRoute
   '/signup/$': typeof AuthSignupSplatRoute
   '/incidents/$id': typeof DashboardIncidentsIdRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/incidents': typeof DashboardIncidentsIndexRoute
   '/monitors': typeof DashboardMonitorsIndexRoute
   '/status-pages': typeof DashboardStatusPagesIndexRoute
+  '/status/$slug/incidents/$id': typeof StatusSlugIncidentsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,7 +195,7 @@ export interface FileRoutesById {
   '/_dashboard/incidents': typeof DashboardIncidentsRouteWithChildren
   '/_dashboard/monitors': typeof DashboardMonitorsRouteWithChildren
   '/_dashboard/status-pages': typeof DashboardStatusPagesRouteWithChildren
-  '/status/$slug': typeof StatusSlugRoute
+  '/status/$slug': typeof StatusSlugRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
   '/_auth/login/$': typeof AuthLoginSplatRoute
   '/_auth/signup/$': typeof AuthSignupSplatRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/_dashboard/incidents/': typeof DashboardIncidentsIndexRoute
   '/_dashboard/monitors/': typeof DashboardMonitorsIndexRoute
   '/_dashboard/status-pages/': typeof DashboardStatusPagesIndexRoute
+  '/status/$slug/incidents/$id': typeof StatusSlugIncidentsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/incidents/'
     | '/monitors/'
     | '/status-pages/'
+    | '/status/$slug/incidents/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/monitors'
     | '/status-pages'
+    | '/status/$slug/incidents/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -262,13 +273,14 @@ export interface FileRouteTypes {
     | '/_dashboard/incidents/'
     | '/_dashboard/monitors/'
     | '/_dashboard/status-pages/'
+    | '/status/$slug/incidents/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
-  StatusSlugRoute: typeof StatusSlugRoute
+  StatusSlugRoute: typeof StatusSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -420,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginSplatRouteImport
       parentRoute: typeof AuthLoginRoute
     }
+    '/status/$slug/incidents/$id': {
+      id: '/status/$slug/incidents/$id'
+      path: '/incidents/$id'
+      fullPath: '/status/$slug/incidents/$id'
+      preLoaderRoute: typeof StatusSlugIncidentsIdRouteImport
+      parentRoute: typeof StatusSlugRoute
+    }
   }
 }
 
@@ -522,11 +541,23 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface StatusSlugRouteChildren {
+  StatusSlugIncidentsIdRoute: typeof StatusSlugIncidentsIdRoute
+}
+
+const StatusSlugRouteChildren: StatusSlugRouteChildren = {
+  StatusSlugIncidentsIdRoute: StatusSlugIncidentsIdRoute,
+}
+
+const StatusSlugRouteWithChildren = StatusSlugRoute._addFileChildren(
+  StatusSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
-  StatusSlugRoute: StatusSlugRoute,
+  StatusSlugRoute: StatusSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

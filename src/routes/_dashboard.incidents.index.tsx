@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
-import { WarningCircle, MagnifyingGlass } from "@phosphor-icons/react";
+import { useState, useEffect, useCallback, type FormEvent } from "react";
+import { WarningCircle, MagnifyingGlass, Plus, X } from "@phosphor-icons/react";
 import { Input } from "~/components/ui/input";
 import { Badge } from "~/components/ui";
 import { Button } from "~/components/ui/button";
@@ -8,6 +8,7 @@ import { PageHeader } from "~/components/page-header";
 import { EmptyState } from "~/components/empty-state";
 import { DataTable } from "~/components/ui/data-table";
 import type { DataTableColumn } from "~/components/ui/data-table";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -22,6 +23,7 @@ interface Incident {
   id: string;
   title: string;
   status: string;
+  incidentType: string;
   isAutomatic: boolean;
   startedAt: string;
   resolvedAt: string | null;
@@ -32,6 +34,9 @@ const STATUS_STYLES: Record<string, { color: "orange" | "blue" | "gray" | "green
   identified: { color: "blue", variant: "light", label: "Identified" },
   monitoring: { color: "gray", variant: "stroke", label: "Monitoring" },
   resolved: { color: "green", variant: "light", label: "Resolved" },
+  planned: { color: "gray", variant: "stroke", label: "Planned" },
+  in_progress: { color: "blue", variant: "light", label: "In Progress" },
+  completed: { color: "green", variant: "light", label: "Completed" },
 };
 
 const STATUS_FILTER_OPTIONS = [
@@ -40,7 +45,16 @@ const STATUS_FILTER_OPTIONS = [
   { value: "identified", label: "Identified" },
   { value: "monitoring", label: "Monitoring" },
   { value: "resolved", label: "Resolved" },
+  { value: "planned", label: "Planned" },
+  { value: "in_progress", label: "In Progress" },
+  { value: "completed", label: "Completed" },
 ];
+
+const INCIDENT_STATUS_OPTIONS = ["investigating", "identified", "monitoring", "resolved"] as const;
+const MAINTENANCE_STATUS_OPTIONS = ["planned", "in_progress", "completed"] as const;
+
+type IncidentType = "incident" | "scheduled";
+type IncidentStatus = typeof INCIDENT_STATUS_OPTIONS[number] | typeof MAINTENANCE_STATUS_OPTIONS[number];
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -63,6 +77,14 @@ function IncidentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [incidentType, setIncidentType] = useState<IncidentType>("incident");
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState<IncidentStatus>("investigating");
+  const [scheduledStartAt, setScheduledStartAt] = useState("");
+  const [scheduledEndAt, setScheduledEndAt] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -79,6 +101,64 @@ function IncidentsPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  function resetForm(nextType: IncidentType = "incident") {
+    setIncidentType(nextType);
+    setTitle("");
+    setStatus(nextType === "scheduled" ? "planned" : "investigating");
+    setScheduledStartAt("");
+    setScheduledEndAt("");
+    setFormError("");
+  }
+
+  function openCreateModal(nextType: IncidentType) {
+    resetForm(nextType);
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+    resetForm();
+  }
+
+  async function handleCreate(e: FormEvent) {
+    e.preventDefault();
+    setCreating(true);
+    setFormError("");
+
+    const payload: Record<string, unknown> = {
+      title,
+      incidentType,
+      status,
+    };
+
+    if (incidentType === "scheduled") {
+      payload.scheduledStartAt = scheduledStartAt ? new Date(scheduledStartAt).toISOString() : undefined;
+      payload.scheduledEndAt = scheduledEndAt ? new Date(scheduledEndAt).toISOString() : undefined;
+    }
+
+    try {
+      const res = await api("/api/incidents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({} as { error?: string }));
+        throw new Error(body.error ?? "Failed to create entry");
+      }
+
+      const created = await res.json();
+      closeModal();
+      load();
+      navigate({ to: "/incidents/$id", params: { id: created.id } });
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setCreating(false);
+    }
+  }
 
   const filtered = incidents.filter((inc) => {
     const matchesSearch = inc.title.toLowerCase().includes(search.toLowerCase());
@@ -99,6 +179,17 @@ function IncidentsPage() {
             <Badge variant="stroke" color="gray" size="sm" className="mt-0.5">auto</Badge>
           )}
         </>
+      ),
+    },
+    {
+      id: "incidentType",
+      header: "Type",
+      sortable: true,
+      sortValue: (inc) => inc.incidentType,
+      cell: (inc) => (
+        <Badge variant="stroke" color={inc.incidentType === "scheduled" ? "blue" : "gray"} size="sm">
+          {inc.incidentType === "scheduled" ? "Maintenance" : "Incident"}
+        </Badge>
       ),
     },
     {
@@ -150,6 +241,16 @@ function IncidentsPage() {
         icon={WarningCircle}
         title="Incidents"
         description="Track and manage incidents across your monitors"
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="neutral" mode="stroke" icon={Plus} onClick={() => openCreateModal("incident")}>
+                New incident
+              </Button>
+              <Button variant="primary" icon={Plus} onClick={() => openCreateModal("scheduled")}>
+                Schedule maintenance
+              </Button>
+            </div>
+          }
       />
 
       <DataTable
@@ -168,13 +269,13 @@ function IncidentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search incidents…"
-              className="w-full pl-8 font-sans text-sm sm:w-[240px]"
+              className="w-full pl-8 font-sans text-sm sm:w-60"
             />
           </div>
         }
         toolbar={
           <div className="flex flex-wrap items-center gap-3">
-            <div className="w-[160px]">
+            <div className="w-40">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All statuses" />
@@ -197,6 +298,96 @@ function IncidentsPage() {
             : "Try a different search term or adjust your filters.",
         }}
       />
+
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="create-incident-title">
+          <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
+            <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-[#2a2a2a]">
+              <div>
+                <h2 id="create-incident-title" className="text-base font-medium text-gray-900 dark:text-gray-50">
+                  {incidentType === "scheduled" ? "Schedule maintenance" : "Create incident"}
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {incidentType === "scheduled"
+                    ? "Create a planned maintenance window that will appear on the public status page."
+                    : "Create an incident to track an outage or degradation."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+                aria-label="Close"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-5 px-5 py-5">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">Title</Label>
+                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={incidentType === "scheduled" ? "Database maintenance" : "API outage"} />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="type" className="text-gray-700 dark:text-gray-300">Type</Label>
+                  <Select value={incidentType} onValueChange={(value) => {
+                    const nextType = value as IncidentType;
+                    setIncidentType(nextType);
+                    setStatus(nextType === "scheduled" ? "planned" : "investigating");
+                  }}>
+                    <SelectTrigger id="type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="incident">Incident</SelectItem>
+                      <SelectItem value="scheduled">Scheduled maintenance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+                  <Select value={status} onValueChange={(value) => setStatus(value as IncidentStatus)}>
+                    <SelectTrigger id="status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(incidentType === "scheduled" ? MAINTENANCE_STATUS_OPTIONS : INCIDENT_STATUS_OPTIONS).map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {STATUS_STYLES[option]?.label ?? option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {incidentType === "scheduled" && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="scheduledStartAt" className="text-gray-700 dark:text-gray-300">Scheduled start</Label>
+                    <Input id="scheduledStartAt" type="datetime-local" value={scheduledStartAt} onChange={(e) => setScheduledStartAt(e.target.value)} required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="scheduledEndAt" className="text-gray-700 dark:text-gray-300">Scheduled end</Label>
+                    <Input id="scheduledEndAt" type="datetime-local" value={scheduledEndAt} onChange={(e) => setScheduledEndAt(e.target.value)} required />
+                  </div>
+                </div>
+              )}
+
+              {formError && <p className="text-sm text-red-500" role="alert">{formError}</p>}
+
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 pt-5 dark:border-[#2a2a2a]">
+                <Button type="button" variant="neutral" mode="ghost" onClick={closeModal}>Cancel</Button>
+                <Button type="submit" variant="primary" loading={creating} className="font-normal">
+                  {incidentType === "scheduled" ? "Schedule" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
