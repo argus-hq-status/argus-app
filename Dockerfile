@@ -9,6 +9,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
 ENV COREPACK_ENABLE_STRICT=0
+ENV NITRO_PRESET=node-server
 RUN yarn build
 
 FROM node:22-alpine AS runner

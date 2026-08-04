@@ -22,7 +22,7 @@ export default defineConfig({
     tanstackStart({ srcDirectory: 'src' }),
     viteReact(),
     nitro({
-      preset: 'vercel',
+      preset: process.env.NITRO_PRESET ?? 'vercel',
       routeRules: {
         '/api/**': {
           proxy: `${process.env.API_URL ?? 'http://localhost:4000'}/api/**`,
