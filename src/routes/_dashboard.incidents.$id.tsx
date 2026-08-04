@@ -1,29 +1,36 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { WarningCircle, Trash } from "@phosphor-icons/react";
+import { WarningCircle, Trash, Plus } from "@phosphor-icons/react";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui";
 import { Card } from "~/components/ui/card";
+import * as Drawer from "~/components/ui/drawer";
 import { Label } from "~/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
-const statusConfig: Record<string, { color: "orange" | "blue" | "gray" | "green"; label: string }> = {
+const statusConfig: Record<string, { color: "orange" | "blue" | "gray" | "green" | "red"; label: string }> = {
   investigating: { color: "orange", label: "Investigating" },
   identified: { color: "blue", label: "Identified" },
   monitoring: { color: "gray", label: "Monitoring" },
   resolved: { color: "green", label: "Resolved" },
+  planned: { color: "gray", label: "Planned" },
+  in_progress: { color: "blue", label: "In Progress" },
+  completed: { color: "green", label: "Completed" },
 };
 
 interface IncidentData {
   id: string;
   title: string;
   status: string;
+  incidentType: string;
   isAutomatic: boolean;
   startedAt: string;
   resolvedAt: string | null;
+  scheduledStartAt: string | null;
+  scheduledEndAt: string | null;
 }
 
 interface UpdateData {
@@ -50,6 +57,7 @@ function IncidentDetailPage() {
   const [newStatus, setNewStatus] = useState("investigating");
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   async function handleDelete() {
     if (!confirm("Delete this incident permanently?")) return;
@@ -95,6 +103,7 @@ function IncidentDetailPage() {
       });
       if (!res.ok) throw new Error("Failed to add update");
       setMessage("");
+      setDrawerOpen(false);
       load();
     } catch (e) {
       alert(e instanceof Error ? e.message : "Something went wrong");
@@ -114,6 +123,7 @@ function IncidentDetailPage() {
   }
 
   const cfg = statusConfig[incident.status] ?? { color: "gray" as const, label: incident.status };
+  const isScheduled = incident.incidentType === "scheduled";
 
   return (
     <div className="space-y-6">
@@ -121,12 +131,17 @@ function IncidentDetailPage() {
         <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
           {incident.title}
         </h1>
-        <Button variant="error" mode="ghost" size="sm" icon={Trash} loading={deleting} onClick={handleDelete}>
-          Delete
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="neutral" mode="stroke" size="sm" icon={Plus} onClick={() => setDrawerOpen(true)}>
+            Add Update
+          </Button>
+          <Button variant="error" mode="ghost" size="sm" icon={Trash} loading={deleting} onClick={handleDelete}>
+            Delete
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className={statCardClass}>
           <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
           <div className="mt-0.5">
@@ -135,8 +150,8 @@ function IncidentDetailPage() {
         </div>
         <div className={statCardClass}>
           <p className="text-xs text-gray-500 dark:text-gray-400">Type</p>
-          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
-            {incident.isAutomatic ? "Automatic" : "Manual"}
+          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50 capitalize">
+            {incident.incidentType}
           </p>
         </div>
         <div className={statCardClass}>
@@ -154,6 +169,23 @@ function IncidentDetailPage() {
           </div>
         )}
       </div>
+      
+      {isScheduled && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
+          <div className={statCardClass}>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Scheduled Start</p>
+            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+              {incident.scheduledStartAt ? new Date(incident.scheduledStartAt).toLocaleString() : "-"}
+            </p>
+          </div>
+          <div className={statCardClass}>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Scheduled End</p>
+            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+              {incident.scheduledEndAt ? new Date(incident.scheduledEndAt).toLocaleString() : "-"}
+            </p>
+          </div>
+        </div>
+      )}
 
       <section>
         <h2 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-50">Timeline</h2>
@@ -172,9 +204,9 @@ function IncidentDetailPage() {
               return (
                 <div key={u.id} className="relative flex gap-4 pb-6 last:pb-0">
                   <div className={`relative z-10 mt-1.5 size-3.5 shrink-0 rounded-full border-2 ${
-                    u.status === "resolved"
+                    (u.status === "resolved" || u.status === "completed")
                       ? "border-success bg-success-light"
-                      : u.status === "investigating"
+                      : (u.status === "investigating" || u.status === "planned")
                         ? "border-warning bg-warning-light"
                         : "border-info bg-info-light"
                   }`} />
@@ -194,40 +226,67 @@ function IncidentDetailPage() {
         )}
       </section>
 
-      <Card className="p-5">
-        <h3 className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-50">Add Update</h3>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
-            <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger id="status">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="investigating">Investigating</SelectItem>
-                <SelectItem value="identified">Identified</SelectItem>
-                <SelectItem value="monitoring">Monitoring</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">Message</Label>
-            <Textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Describe the current status..."
-              rows={3}
-            />
-          </div>
-          <div className="flex justify-end">
+      <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <Drawer.Content>
+          <Drawer.Header>
+            <div>
+              <Drawer.Title className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                Add Update
+              </Drawer.Title>
+              <Drawer.Description className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                Post a status update for {incident.title}
+              </Drawer.Description>
+            </div>
+            <Drawer.CloseButton />
+          </Drawer.Header>
+          <Drawer.Body>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+                <Select value={newStatus} onValueChange={setNewStatus}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {!isScheduled ? (
+                      <>
+                        <SelectItem value="investigating">Investigating</SelectItem>
+                        <SelectItem value="identified">Identified</SelectItem>
+                        <SelectItem value="monitoring">Monitoring</SelectItem>
+                        <SelectItem value="resolved">Resolved</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="planned">Planned</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">Message</Label>
+                <Textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Describe the current status..."
+                  rows={5}
+                />
+              </div>
+            </div>
+          </Drawer.Body>
+          <Drawer.Footer>
+            <Button variant="neutral" mode="ghost" size="sm" onClick={() => setDrawerOpen(false)}>
+              Cancel
+            </Button>
             <Button variant="primary" size="sm" loading={submitting} disabled={!message.trim()} onClick={handleAddUpdate}>
               Post Update
             </Button>
-          </div>
-        </div>
-      </Card>
+          </Drawer.Footer>
+        </Drawer.Content>
+      </Drawer.Root>
     </div>
   );
 }
