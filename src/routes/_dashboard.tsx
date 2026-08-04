@@ -142,11 +142,6 @@ function DashboardShell() {
                 afterCreateOrganizationUrl="/"
                 afterSelectOrganizationUrl="/"
                 appearance={{
-                  variables: {
-                    colorText: "#f4f4f5",
-                    colorTextSecondary: "#a1a1aa",
-                    colorBackground: "#18181b",
-                  },
                   elements: {
                     rootBox: "w-full",
                     organizationSwitcherTrigger:
