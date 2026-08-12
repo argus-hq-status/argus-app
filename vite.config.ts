@@ -25,7 +25,7 @@ export default defineConfig({
       preset: process.env.NITRO_PRESET ?? 'vercel',
       routeRules: {
         '/api/**': {
-          proxy: `${process.env.API_URL ?? 'http://localhost:4000'}/api/**`,
+          proxy: `${process.env.API_URL ?? 'https://argus-engine.onrender.com'}/api/**`,
         },
       },
     }),
