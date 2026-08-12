@@ -94,6 +94,13 @@ const clerkApiProxy = createMiddleware({
   }
   stripFapiCookieDomain(resHeaders, fapiUrl.host);
 
+  // Node's fetch auto-decompresses the response body, so the upstream
+  // Content-Encoding / Content-Length no longer match the raw bytes we
+  // forward.  Drop them and let the Vercel / Nitro runtime recompute.
+  resHeaders.delete("content-encoding");
+  resHeaders.delete("content-length");
+  resHeaders.delete("transfer-encoding");
+
   return new Response(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,
