@@ -5,19 +5,19 @@ import { cn } from "~/lib/utils";
 const buttonVariantStyles = {
   primary: {
     filled:
-      "bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.2)] hover:bg-primary/90 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.24)] ring-1 ring-inset ring-white/10 focus-visible:ring-2 focus-visible:ring-primary/50",
+      "bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.16)] hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-ring/35",
     stroke:
-      "bg-card text-primary ring-1 ring-inset ring-primary hover:bg-primary/10 hover:ring-transparent",
+      "bg-control text-primary shadow-xs ring-1 ring-inset ring-primary/30 hover:bg-primary-muted hover:ring-primary/45",
     lighter:
-      "bg-primary/10 text-primary ring-transparent hover:bg-card hover:ring-1 hover:ring-inset hover:ring-primary",
+      "bg-primary-muted text-primary hover:bg-primary/15",
     ghost:
-      "bg-transparent text-primary hover:bg-primary/10",
+      "bg-transparent text-primary hover:bg-primary-muted",
   },
   neutral: {
     filled:
       "bg-foreground text-background shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.1)] hover:bg-foreground/90 hover:shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.25),0_1px_2px_rgba(0,0,0,0.15)] ring-1 ring-inset ring-black/10 focus-visible:ring-2 focus-visible:ring-foreground/30",
     stroke:
-      "bg-card text-foreground/80 shadow-xs ring-1 ring-inset ring-border hover:bg-muted hover:text-foreground hover:ring-transparent",
+      "bg-control text-foreground/85 shadow-xs ring-1 ring-inset ring-border hover:bg-control-hover hover:text-foreground hover:ring-stroke-sub",
     lighter:
       "bg-muted text-muted-foreground ring-transparent hover:bg-card hover:text-foreground hover:shadow-xs hover:ring-1 hover:ring-inset hover:ring-border",
     ghost:
@@ -37,9 +37,9 @@ const buttonVariantStyles = {
 
 const buttonSizeStyles = {
   lg: "h-9 gap-2 rounded-[0.4375rem] px-3.5 text-[0.8125rem] font-semibold",
-  md: "h-8 gap-2 rounded-[0.4375rem] px-3 text-xs font-semibold",
-  sm: "h-7 gap-1.5 rounded-md px-2.5 text-[0.6875rem] font-semibold",
-  xs: "h-6 gap-1 rounded-md px-2 text-[0.625rem] font-semibold",
+  md: "h-8 gap-2 rounded-lg px-3 text-[0.8125rem] font-medium",
+  sm: "h-7 gap-1.5 rounded-md px-2.5 text-xs font-medium",
+  xs: "h-6 gap-1 rounded-md px-2 text-[0.6875rem] font-medium",
 } as const;
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -116,8 +116,8 @@ export function getButtonClassName({
   className?: string;
 }) {
   return cn(
-    "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition-all duration-200 ease-out active:scale-[0.98]",
-    "focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+    "group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap outline-none transition-[color,background-color,border-color,box-shadow,transform] duration-150 [transition-timing-function:cubic-bezier(0.2,0,0,1)] active:scale-[0.96]",
+    "focus:outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none",
     buttonVariantStyles[variant][mode],
     buttonSizeStyles[size],
     className,

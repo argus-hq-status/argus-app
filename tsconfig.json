@@ -1,5 +1,6 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite.config.ts"],
+  "exclude": [".agents", "node_modules", "dist", ".output"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,

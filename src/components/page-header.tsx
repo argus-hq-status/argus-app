@@ -11,21 +11,21 @@ type PageHeaderProps = {
 
 export function PageHeader({ icon: Icon, title, description, actions, className }: PageHeaderProps) {
   return (
-    <div className={cn("mb-8 flex items-start justify-between gap-4", className)}>
-      <div className="flex gap-4">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-500 dark:border-blue-400/20 dark:bg-blue-500/15 dark:text-blue-400">
-          <Icon className="size-4.5 text-blue-500 dark:text-blue-400" weight="fill" />
+    <div className={cn("mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between", className)}>
+      <div className="flex min-w-0 gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary-muted text-primary shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--primary)_18%,transparent)]">
+          <Icon className="size-[18px]" weight="bold" />
         </div>
-        <div>
-          <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
+        <div className="min-w-0">
+          <h1 className="text-[1.375rem] font-semibold leading-7 tracking-[-0.025em] text-foreground text-balance">
             {title}
           </h1>
           {description && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+            <p className="mt-0.5 max-w-2xl text-[0.8125rem] leading-5 text-muted-foreground text-pretty">{description}</p>
           )}
         </div>
       </div>
-      {actions ? <div className="shrink-0">{actions}</div> : null}
+      {actions ? <div className="shrink-0 self-start">{actions}</div> : null}
     </div>
   );
 }

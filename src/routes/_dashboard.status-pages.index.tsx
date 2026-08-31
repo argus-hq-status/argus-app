@@ -22,7 +22,7 @@ interface StatusPage {
   defaultTheme?: "light" | "dark";
 }
 
-const listCardClass = "flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]";
+const listCardClass = "flex items-center justify-between rounded-xl bg-card px-4 py-3.5 shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]";
 
 export const Route = createFileRoute("/_dashboard/status-pages/")({
   component: StatusPagesPage,
@@ -159,20 +159,20 @@ function StatusPagesPage() {
           {pages.map((p) => (
             <div key={p.id} className={listCardClass}>
               <div className="flex min-w-0 items-center gap-3">
-                <StatusPageLogo src={p.logoUrl ?? organizationLogoUrl} name={p.name} className="size-9 shrink-0 ring-1 ring-gray-200 dark:ring-[#2a2a2a]" />
+                <StatusPageLogo src={p.logoUrl ?? organizationLogoUrl} name={p.name} className="size-9 shrink-0 ring-1 ring-border" />
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-50">{p.name}</span>
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:bg-[#242424] dark:text-gray-400">
+                    <span className="text-sm font-medium text-foreground">{p.name}</span>
+                    <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                       {p.defaultTheme ?? "dark"}
                     </span>
                   </div>
-                  <span className="font-sans text-sm text-gray-500 dark:text-gray-400">/{p.slug}</span>
+                  <span className="text-sm text-muted-foreground">/{p.slug}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <a href={`/status/${p.slug}`} target="_blank" rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+                  className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
                   aria-label="View public page">
                   <ArrowUpRight className="size-4" weight="bold" />
                 </a>
@@ -185,16 +185,16 @@ function StatusPagesPage() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="create-status-page-title">
-          <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-            <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-[#2a2a2a]">
+          <div className="w-full max-w-lg rounded-2xl bg-surface-raised shadow-[0_20px_60px_rgba(0,0,0,0.28),0_0_0_1px_var(--border)]">
+            <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
               <div>
-                <h2 id="create-status-page-title" className="text-base font-medium text-gray-900 dark:text-gray-50">{modalMode === "edit" ? "Edit status page" : "Create status page"}</h2>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{modalMode === "edit" ? "Update the public identity, logo, and default theme your users will see." : "Choose the public identity, logo, and default theme your users will see."}</p>
+                <h2 id="create-status-page-title" className="text-base font-semibold text-foreground">{modalMode === "edit" ? "Edit status page" : "Create status page"}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{modalMode === "edit" ? "Update the public identity, logo, and default theme your users will see." : "Choose the public identity, logo, and default theme your users will see."}</p>
               </div>
               <button
                 type="button"
                 onClick={closeModal}
-                className="flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
                 aria-label="Close"
               >
                 <X className="size-4" />
@@ -204,22 +204,22 @@ function StatusPagesPage() {
             <form onSubmit={handleSubmit} className="space-y-5 px-5 py-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="My Status Page" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="slug" className="text-gray-700 dark:text-gray-300">Slug</Label>
+                  <Label htmlFor="slug">Slug</Label>
                   <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required placeholder="my-status" className="font-sans" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-gray-700 dark:text-gray-300">Logo</Label>
-                <div className="flex items-center gap-3 rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 dark:border-[#2a2a2a] dark:bg-[#141414]">
-                  <StatusPageLogo src={logoUrl || organizationLogoUrl} name={name} className="size-12 shrink-0 ring-1 ring-gray-200 dark:ring-[#2a2a2a]" />
+                <Label>Logo</Label>
+                <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-surface-sunken/60 p-4">
+                  <StatusPageLogo src={logoUrl || organizationLogoUrl} name={name} className="size-12 shrink-0 ring-1 ring-border" />
                   <div className="min-w-0 flex-1 space-y-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-50">Upload a logo with Cloudinary</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, or WebP. If Cloudinary is unavailable, paste a direct image URL below.</p>
+                    <p className="text-sm font-medium text-foreground">Upload a logo with Cloudinary</p>
+                    <p className="text-xs text-muted-foreground">PNG, JPG, or WebP. If Cloudinary is unavailable, paste a direct image URL below.</p>
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Button type="button" variant="neutral" mode="stroke" size="sm" icon={UploadSimple} onClick={() => fileInputRef.current?.click()} loading={uploadingLogo} disabled={!cloudinaryReady}>
                         {logoUrl ? "Replace logo" : "Upload logo"}
@@ -232,11 +232,11 @@ function StatusPagesPage() {
                 </div>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoFileChange} />
                   <Input id="logoUrl" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://example.com/logo.png" className="font-sans" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Defaults to your Clerk organization logo when empty.</p>
+                  <p className="text-xs text-muted-foreground">Defaults to your Clerk organization logo when empty.</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="defaultTheme" className="text-gray-700 dark:text-gray-300">Default theme</Label>
+                <Label htmlFor="defaultTheme">Default theme</Label>
                 <Select value={defaultTheme} onValueChange={(value) => setDefaultTheme(value as "light" | "dark")}>
                   <SelectTrigger id="defaultTheme">
                     <SelectValue />
@@ -250,7 +250,7 @@ function StatusPagesPage() {
 
               {formError && <p className="text-sm text-red-500" role="alert">{formError}</p>}
 
-              <div className="flex items-center justify-end gap-2 border-t border-gray-200 pt-5 dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-end gap-2 border-t border-border pt-5">
                 <Button type="button" variant="neutral" mode="ghost" onClick={closeModal}>Cancel</Button>
                 <Button type="submit" variant="primary" icon={modalMode === "edit" ? Pencil : Plus} loading={creating || uploadingLogo} className="font-normal">
                   {modalMode === "edit" ? "Save changes" : "Create"}

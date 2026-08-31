@@ -174,7 +174,7 @@ function IncidentsPage() {
       sortValue: (inc) => inc.title,
       cell: (inc) => (
         <>
-          <p className="font-medium text-gray-900 dark:text-gray-50">{inc.title}</p>
+          <p className="font-medium text-foreground">{inc.title}</p>
           {inc.isAutomatic && (
             <Badge variant="stroke" color="gray" size="sm" className="mt-0.5">auto</Badge>
           )}
@@ -211,7 +211,7 @@ function IncidentsPage() {
       header: "Started",
       sortable: true,
       sortValue: (inc) => new Date(inc.startedAt).getTime(),
-      cellClassName: "text-gray-500 dark:text-gray-400",
+      cellClassName: "text-muted-foreground",
       cell: (inc) => formatDate(inc.startedAt),
     },
     {
@@ -219,7 +219,7 @@ function IncidentsPage() {
       header: "Resolved",
       sortable: true,
       sortValue: (inc) => inc.resolvedAt ? new Date(inc.resolvedAt).getTime() : 0,
-      cellClassName: "text-gray-500 dark:text-gray-400",
+      cellClassName: "text-muted-foreground",
       cell: (inc) => inc.resolvedAt ? formatDate(inc.resolvedAt) : "—",
     },
   ];
@@ -263,7 +263,7 @@ function IncidentsPage() {
         onRowClick={(inc) => navigate({ to: "/incidents/$id", params: { id: inc.id } })}
         title={
           <div className="relative">
-            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 dark:text-gray-500" />
+            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-soft" />
             <Input
               aria-label="Search incidents"
               value={search}
@@ -301,13 +301,13 @@ function IncidentsPage() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="create-incident-title">
-          <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-            <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-[#2a2a2a]">
+          <div className="w-full max-w-lg rounded-2xl bg-surface-raised shadow-[0_20px_60px_rgba(0,0,0,0.28),0_0_0_1px_var(--border)]">
+            <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
               <div>
-                <h2 id="create-incident-title" className="text-base font-medium text-gray-900 dark:text-gray-50">
+                <h2 id="create-incident-title" className="text-base font-semibold text-foreground">
                   {incidentType === "scheduled" ? "Schedule maintenance" : "Create incident"}
                 </h2>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {incidentType === "scheduled"
                     ? "Create a planned maintenance window that will appear on the public status page."
                     : "Create an incident to track an outage or degradation."}
@@ -316,7 +316,7 @@ function IncidentsPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
                 aria-label="Close"
               >
                 <X className="size-4" />
@@ -325,13 +325,13 @@ function IncidentsPage() {
 
             <form onSubmit={handleCreate} className="space-y-5 px-5 py-5">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">Title</Label>
+                <Label htmlFor="title">Title</Label>
                 <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={incidentType === "scheduled" ? "Database maintenance" : "API outage"} />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="type" className="text-gray-700 dark:text-gray-300">Type</Label>
+                  <Label htmlFor="type">Type</Label>
                   <Select value={incidentType} onValueChange={(value) => {
                     const nextType = value as IncidentType;
                     setIncidentType(nextType);
@@ -347,7 +347,7 @@ function IncidentsPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+                  <Label htmlFor="status">Status</Label>
                   <Select value={status} onValueChange={(value) => setStatus(value as IncidentStatus)}>
                     <SelectTrigger id="status">
                       <SelectValue />
@@ -366,11 +366,11 @@ function IncidentsPage() {
               {incidentType === "scheduled" && (
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="scheduledStartAt" className="text-gray-700 dark:text-gray-300">Scheduled start</Label>
+                    <Label htmlFor="scheduledStartAt">Scheduled start</Label>
                     <Input id="scheduledStartAt" type="datetime-local" value={scheduledStartAt} onChange={(e) => setScheduledStartAt(e.target.value)} required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="scheduledEndAt" className="text-gray-700 dark:text-gray-300">Scheduled end</Label>
+                    <Label htmlFor="scheduledEndAt">Scheduled end</Label>
                     <Input id="scheduledEndAt" type="datetime-local" value={scheduledEndAt} onChange={(e) => setScheduledEndAt(e.target.value)} required />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ function IncidentsPage() {
 
               {formError && <p className="text-sm text-red-500" role="alert">{formError}</p>}
 
-              <div className="flex items-center justify-end gap-2 border-t border-gray-200 pt-5 dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-end gap-2 border-t border-border pt-5">
                 <Button type="button" variant="neutral" mode="ghost" onClick={closeModal}>Cancel</Button>
                 <Button type="submit" variant="primary" loading={creating} className="font-normal">
                   {incidentType === "scheduled" ? "Schedule" : "Create"}

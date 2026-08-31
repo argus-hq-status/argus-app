@@ -32,6 +32,9 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    const style = window.document.createElement("style");
+    style.textContent = "*,*::before,*::after{transition:none!important}";
+    window.document.head.appendChild(style);
 
     root.classList.remove("light", "dark");
 
@@ -42,10 +45,17 @@ export function ThemeProvider({
         : "light";
 
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
 
-    root.classList.add(theme);
+    void window.getComputedStyle(root).opacity;
+    const frame = window.requestAnimationFrame(() => style.remove());
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      style.remove();
+    };
   }, [theme]);
 
   const value = {

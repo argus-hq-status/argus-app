@@ -10,6 +10,7 @@ export default ts.config(
       ".vercel/",
       "dist/",
       "node_modules/",
+      ".agents/",
       "public/",
       "src/routeTree.gen.ts",
     ],
