@@ -16,18 +16,24 @@ function clerkFapiBase(): string {
   const explicit = process.env.CLERK_FAPI_URL;
   if (explicit) return explicit.replace(/\/+$/, "");
 
-  const key = process.env.VITE_CLERK_PUBLISHABLE_KEY;
+  // Server-side Vite may expose the publishable key without the VITE_ prefix.
+  const key =
+    process.env.VITE_CLERK_PUBLISHABLE_KEY ?? process.env.CLERK_PUBLISHABLE_KEY;
   const match = key?.match(/^pk_(test|live)_(.+)$/);
   if (match) {
     try {
       const domain = base64urlDecode(match[2]);
-      if (domain.endsWith(".clerk.accounts.dev")) return `https://${domain}`;
+      if (domain.endsWith(".clerk.accounts.dev") || domain.endsWith(".lcl.dev")) {
+        return `https://${domain}`;
+      }
     } catch {
-      // Fall through to the default below.
+      // Fall through to the error below.
     }
   }
 
-  return "https://unbiased-mule-86.clerk.accounts.dev";
+  throw new Error(
+    "Cannot derive Clerk Frontend API URL. Set CLERK_FAPI_URL or VITE_CLERK_PUBLISHABLE_KEY.",
+  );
 }
 
 function stripFapiCookieDomain(headers: Headers, fapiHost: string): void {
