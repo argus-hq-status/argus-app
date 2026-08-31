@@ -47,6 +47,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <ClerkProvider
+          proxyUrl="/__clerk"
           signInUrl="/login"
           signUpUrl="/signup"
           afterSignOutUrl="/login"
