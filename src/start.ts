@@ -41,7 +41,7 @@ function stripFapiCookieDomain(headers: Headers, fapiHost: string): void {
   if (cookies.length === 0) return;
   headers.delete("set-cookie");
   for (const cookie of cookies) {
-    headers.append("set-cookie", cookie.replace(new RegExp(`;\s*domain=${fapiHost}`, "gi"), ""));
+    headers.append("set-cookie", cookie.replace(new RegExp(`;\\s*domain=${fapiHost}`, "gi"), ""));
   }
 }
 
