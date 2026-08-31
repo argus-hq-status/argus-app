@@ -50,35 +50,35 @@ function BillingPage() {
 
       <Card className="p-5">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-            <CreditCard className="size-5 text-gray-500 dark:text-gray-400" weight="regular" />
+          <div className="flex size-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+            <CreditCard className="size-5" weight="regular" />
           </div>
           <div>
-            <h2 className="text-sm font-medium text-gray-900 dark:text-gray-50">Free Plan</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Up to 2 monitors, 1 status page</p>
+            <h2 className="text-sm font-semibold text-foreground">Free plan</h2>
+            <p className="text-xs text-muted-foreground">Up to 2 monitors and 1 status page</p>
           </div>
         </div>
-        <p className="mt-4 text-2xl font-medium text-gray-900 dark:text-gray-50">$0</p>
+        <p className="mt-5 text-2xl font-semibold tracking-[-0.025em] text-foreground tabular-nums">$0</p>
       </Card>
 
       <Card className="p-5">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-            <CreditCard className="size-5 text-gray-500 dark:text-gray-400" weight="regular" />
+          <div className="flex size-10 items-center justify-center rounded-xl bg-primary-muted text-primary">
+            <CreditCard className="size-5" weight="bold" />
           </div>
           <div className="flex-1">
-            <h2 className="text-sm font-medium text-gray-900 dark:text-gray-50">Pro Plan</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Unlimited monitors, status pages, and alert channels</p>
+            <h2 className="text-sm font-semibold text-foreground">Pro plan</h2>
+            <p className="text-xs text-muted-foreground">Unlimited monitors, status pages, and alert channels</p>
           </div>
           {isPro && <Badge variant="light" color="orange" size="sm">Current Plan</Badge>}
         </div>
-        <p className="mt-4 text-2xl font-medium text-gray-900 dark:text-gray-50">$29 / mo</p>
+        <p className="mt-5 text-2xl font-semibold tracking-[-0.025em] text-foreground tabular-nums">$29 <span className="text-sm font-normal text-muted-foreground">/ month</span></p>
         {isPro ? null : (
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Button variant="primary" loading={loading === "stripe"} onClick={handleStripeCheckout} className="font-normal">
+            <Button variant="primary" loading={loading === "stripe"} onClick={handleStripeCheckout}>
               Upgrade with Stripe <CaretRight className="size-3.5" weight="bold" />
             </Button>
-            <Button variant="neutral" mode="stroke" loading={loading === "paystack"} onClick={handlePaystackCheckout} className="font-normal">
+            <Button variant="neutral" mode="stroke" loading={loading === "paystack"} onClick={handlePaystackCheckout}>
               Pay with Paystack
             </Button>
           </div>

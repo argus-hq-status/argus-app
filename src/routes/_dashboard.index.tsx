@@ -14,7 +14,10 @@ import {
 } from "@phosphor-icons/react";
 import { PageHeader } from "~/components/page-header";
 import { Badge } from "~/components/ui";
-import { Button } from "~/components/ui/button";
+import { ActionButton } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { MetricCard } from "~/components/ui/metric-card";
 import { api } from "~/lib/api";
 import { ListSkeleton } from "~/components/loading-skeleton";
 
@@ -84,103 +87,60 @@ function DashboardHomePage() {
         title="System Overview"
         description="Monitor your services, response performance, and public status pages."
         actions={
-          <Link to="/monitors/new">
-            <Button variant="primary" icon={Plus} size="md">
-              New Monitor
-            </Button>
-          </Link>
+          <ActionButton href="/monitors/new" icon={Plus} size="md">
+            New monitor
+          </ActionButton>
         }
       />
 
-      {/* Metrics Cards Grid - Small Border Radius */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
-            <span>Total Monitors</span>
-            <Monitor className="size-4 text-blue-500" />
-          </div>
-          <div className="mt-1.5 text-xl font-bold text-gray-900 dark:text-gray-100">
-            {totalMonitors}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
-            <span>Services Operational</span>
-            <CheckCircle className="size-4 text-emerald-500" weight="fill" />
-          </div>
-          <div className="mt-1.5 flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-              {upMonitors}
-            </span>
-            <span className="text-xs text-gray-400">/ {totalMonitors}</span>
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
-            <span>Active Incidents</span>
-            <WarningCircle className="size-4 text-rose-500" weight="fill" />
-          </div>
-          <div className="mt-1.5 text-xl font-bold text-rose-600 dark:text-rose-400">
-            {downMonitors}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-          <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
-            <span>Public Status Pages</span>
-            <StackSimple className="size-4 text-purple-500" />
-          </div>
-          <div className="mt-1.5 text-xl font-bold text-gray-900 dark:text-gray-100">
-            {statusPages.length}
-          </div>
-        </div>
+        <MetricCard label="Total monitors" value={totalMonitors} icon={Monitor} tone="primary" detail="configured" />
+        <MetricCard label="Operational" value={upMonitors} icon={CheckCircle} tone="success" detail={`of ${totalMonitors}`} />
+        <MetricCard label="Active incidents" value={downMonitors} icon={WarningCircle} tone={downMonitors > 0 ? "error" : "success"} detail={downMonitors > 0 ? "needs attention" : "all clear"} />
+        <MetricCard label="Status pages" value={statusPages.length} icon={StackSimple} tone="neutral" detail="public" />
       </div>
 
       {/* Monitor Cards Section */}
       <div className="space-y-3.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold tracking-tight text-gray-900 dark:text-gray-100">
-              Monitors & Health Status
+            <h2 className="text-sm font-semibold tracking-[-0.01em] text-foreground">
+              Service health
             </h2>
-            <p className="text-xs text-gray-500 dark:text-zinc-400">
-              Real-time check results and uptime performance metrics
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Live check results and 30-day uptime history.
             </p>
           </div>
 
           <div className="relative w-full max-w-xs sm:w-auto">
-            <MagnifyingGlass className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-gray-400" />
-            <input
+            <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 z-10 size-3.5 -translate-y-1/2 text-text-soft" />
+            <Input
               type="text"
               placeholder="Filter monitors..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-md border border-gray-200 bg-white pl-9 pr-3 py-1 text-xs text-gray-900 focus:outline-none dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-gray-100"
+              className="w-full pl-9 text-xs sm:w-64"
             />
           </div>
         </div>
 
         {filteredMonitors.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white p-10 text-center dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
-              <Monitor className="size-5 text-blue-500" />
+          <Card className="flex flex-col items-center justify-center border border-dashed border-border bg-card p-10 text-center shadow-none">
+            <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary-muted text-primary">
+              <Monitor className="size-5" />
             </div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-sm font-semibold text-foreground">
               No monitors found
             </h3>
-            <p className="mt-1 max-w-sm text-xs text-gray-500 dark:text-zinc-400">
+            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground text-pretty">
               Get started by creating your first monitor to track uptime and response times.
             </p>
             <div className="mt-4">
-              <Link to="/monitors/new">
-                <Button variant="primary" icon={Plus} size="sm">
-                  Create Monitor
-                </Button>
-              </Link>
+              <ActionButton href="/monitors/new" icon={Plus} size="sm">
+                Create monitor
+              </ActionButton>
             </div>
-          </div>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredMonitors.map((m, idx) => {
@@ -188,9 +148,9 @@ function DashboardHomePage() {
               const linkedStatusPage = statusPages[idx % Math.max(statusPages.length, 1)];
 
               return (
-                <div
+                <Card
                   key={m.id}
-                  className="group relative flex flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-500/40 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]"
+                  className="group relative flex flex-col justify-between p-4 transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_30%,transparent),0_8px_24px_rgba(0,0,0,0.08)]"
                 >
                   <div>
                     {/* Header */}
@@ -199,11 +159,11 @@ function DashboardHomePage() {
                         <Link
                           to="/monitors/$id"
                           params={{ id: m.id }}
-                          className="font-semibold text-sm text-gray-900 hover:text-blue-500 transition dark:text-gray-100 dark:hover:text-blue-400"
+                          className="text-sm font-semibold text-foreground transition-colors duration-150 hover:text-primary"
                         >
                           {m.name}
                         </Link>
-                        <p className="truncate text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">
                           {m.url}
                         </p>
                       </div>
@@ -218,12 +178,12 @@ function DashboardHomePage() {
 
                     {/* Status Page Style Segmented Uptime History Bar (Small Border Radius) */}
                     <div className="mt-4 space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] font-medium text-gray-500 dark:text-zinc-400">
+                      <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Lightning className="size-3 text-amber-500" />
                           Uptime History
                         </span>
-                        <span className="font-mono text-emerald-500 font-semibold text-[11px]">
+                        <span className="text-[11px] font-semibold text-success tabular-nums">
                           {isUp ? "99.9% operational" : "Degraded"}
                         </span>
                       </div>
@@ -237,7 +197,7 @@ function DashboardHomePage() {
                             <div
                               key={barIdx}
                               title={`Period #${barIdx + 1}: ${isGreen ? "100% Uptime" : "Down"}`}
-                              className={`h-2 flex-1 rounded-[1.5px] transition-all hover:opacity-80 ${
+                              className={`h-2 flex-1 rounded-[2px] transition-opacity duration-150 hover:opacity-75 ${
                                 isGreen
                                   ? "bg-emerald-500"
                                   : isRed
@@ -249,7 +209,7 @@ function DashboardHomePage() {
                         })}
                       </div>
 
-                      <div className="flex items-center justify-between text-[10px] text-gray-400 dark:text-zinc-500 pt-0.5">
+                      <div className="flex items-center justify-between pt-0.5 text-[10px] text-text-soft">
                         <span>30 days ago</span>
                         <span>100% uptime</span>
                         <span>Today</span>
@@ -258,11 +218,11 @@ function DashboardHomePage() {
                   </div>
 
                   {/* Actions & Status Page Link */}
-                  <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-[#262626]">
+                  <div className="mt-4 flex items-center justify-between border-t border-border/70 pt-3">
                     <Link
                       to="/monitors/$id"
                       params={{ id: m.id }}
-                      className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+                      className="text-xs font-medium text-primary underline-offset-4 hover:underline"
                     >
                       View details
                     </Link>
@@ -272,7 +232,7 @@ function DashboardHomePage() {
                       <Link
                         to="/status/$slug"
                         params={{ slug: linkedStatusPage ? linkedStatusPage.slug : "default" }}
-                        className="flex items-center gap-1 rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-700 transition hover:bg-blue-500 hover:text-white dark:border-[#2a2a2a] dark:bg-[#222225] dark:text-zinc-300 dark:hover:bg-blue-600 dark:hover:text-white"
+                        className="flex h-6 items-center gap-1 rounded-md bg-control px-2 text-[11px] font-medium text-muted-foreground shadow-[inset_0_0_0_1px_var(--border)] transition-colors duration-150 hover:bg-primary hover:text-primary-foreground"
                         title="View status page"
                       >
                         <span>Status Page</span>
@@ -281,14 +241,14 @@ function DashboardHomePage() {
                     ) : (
                       <Link
                         to="/status-pages"
-                        className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-blue-400"
+                        className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors duration-150 hover:text-primary"
                       >
                         <span>Add Status Page</span>
                         <ArrowUpRight className="size-3" />
                       </Link>
                     )}
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>

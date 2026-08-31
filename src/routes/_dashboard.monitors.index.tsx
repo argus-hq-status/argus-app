@@ -85,7 +85,7 @@ function MonitorsPage() {
         <Link
           to="/monitors/$id"
           params={{ id: m.id }}
-          className="font-medium text-gray-900 hover:text-primary transition dark:text-gray-50"
+          className="font-medium text-foreground transition-colors duration-150 hover:text-primary"
         >
           {m.name}
         </Link>
@@ -96,7 +96,7 @@ function MonitorsPage() {
       header: "Endpoint",
       sortable: true,
       sortValue: (m) => m.url,
-      cellClassName: "text-gray-500 dark:text-gray-400",
+      cellClassName: "text-muted-foreground",
       cell: (m) => (
         <span className="max-w-[280px] truncate block">{m.url}</span>
       ),
@@ -121,7 +121,7 @@ function MonitorsPage() {
       sortable: true,
       sortValue: (m) => (m.isActive ? 1 : 0),
       cell: (m) => (
-        <span className={m.isActive ? "text-emerald-600" : "text-gray-400 dark:text-gray-500"}>
+        <span className={m.isActive ? "text-success" : "text-text-soft"}>
           {m.isActive ? "Yes" : "No"}
         </span>
       ),
@@ -163,7 +163,7 @@ function MonitorsPage() {
         onRowClick={(m) => navigate({ to: "/monitors/$id", params: { id: m.id } })}
         title={
           <div className="relative">
-            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 dark:text-gray-500" />
+            <MagnifyingGlass className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-soft" />
             <Input
               aria-label="Search monitors"
               value={search}

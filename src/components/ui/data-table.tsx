@@ -128,7 +128,7 @@ export function DataTable<T>({
 
       <div
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-[#2a2a2a] dark:bg-[#141414]",
+          "relative flex flex-col overflow-hidden rounded-xl bg-card shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]",
           showEmptyState ? "h-auto" : undefined,
         )}
         style={showEmptyState ? undefined : { height: resolvedHeight }}
@@ -138,14 +138,14 @@ export function DataTable<T>({
             showEmptyState ? "overflow-hidden" : "min-h-0 flex-1 overflow-y-auto pb-12",
           )}
         >
-          <table className="w-full caption-bottom font-sans text-sm">
-            <TableHeader className="sticky top-0 z-10 border-b border-gray-200 bg-gray-50 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]">
-              <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-[#2a2a2a]">
+          <table className="w-full caption-bottom text-[0.8125rem]">
+            <TableHeader className="sticky top-0 z-10 border-b border-border bg-surface-sunken/95 backdrop-blur-sm">
+              <TableRow className="border-b border-border hover:bg-transparent">
                 {columns.map((column) => (
                   <TableHead
                     key={column.id}
                     className={cn(
-                      "h-10 px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400",
+                      "h-10 px-4 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground",
                       column.headerClassName,
                     )}
                   >
@@ -153,7 +153,7 @@ export function DataTable<T>({
                       <button
                         type="button"
                         onClick={() => toggleSort(column.id)}
-                        className="hover:text-gray-900 dark:hover:text-gray-100"
+                        className="inline-flex items-center gap-1.5 rounded-sm transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:text-primary"
                       >
                         {column.header}
                         {sortIndicator(column.id)}
@@ -171,8 +171,8 @@ export function DataTable<T>({
                   <TableRow
                     key={getRowKey(item)}
                     className={cn(
-                      "border-b border-gray-100 dark:border-[#222]",
-                      onRowClick && "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.03]",
+                      "border-b border-border/70",
+                      onRowClick && "cursor-pointer hover:bg-muted/55",
                     )}
                     onClick={onRowClick ? () => onRowClick(item) : undefined}
                   >
@@ -202,7 +202,7 @@ export function DataTable<T>({
                 <TableRow className="hover:bg-transparent">
                   <TableCell
                     colSpan={columns.length}
-                    className="py-16 text-center text-sm text-gray-500 dark:text-gray-400"
+                    className="py-16 text-center text-sm text-muted-foreground"
                   >
                     No results match your filters.
                   </TableCell>
@@ -214,7 +214,7 @@ export function DataTable<T>({
 
         <div
           className={cn(
-            "flex shrink-0 items-center justify-between gap-3 border-t border-gray-200 bg-gray-50/95 px-4 py-2.5 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]",
+            "flex shrink-0 items-center justify-between gap-3 border-t border-border bg-surface-sunken/95 px-4 py-2.5",
             showEmptyState
               ? "relative"
               : "absolute inset-x-0 bottom-0 z-20 backdrop-blur-sm",
@@ -222,8 +222,8 @@ export function DataTable<T>({
         >
           <div className="flex items-center gap-4">
             {footer}
-            <p className="font-sans text-sm text-gray-500 dark:text-gray-400">
-              pg {currentPage}/{totalPages}
+            <p className="text-xs text-muted-foreground tabular-nums">
+              Page {currentPage} of {totalPages}
             </p>
           </div>
           <div className="flex gap-2">

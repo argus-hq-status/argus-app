@@ -74,7 +74,7 @@ function MetricCard({
   label,
   value,
   icon: Icon,
-  valueColorClass = "text-gray-900 dark:text-gray-100",
+  valueColorClass = "text-foreground",
 }: {
   label: string;
   value: ReactNode;
@@ -82,8 +82,8 @@ function MetricCard({
   valueColorClass?: string;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-      <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
+    <div className="rounded-xl bg-card p-4 shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
         <span>{label}</span>
         {Icon && <Icon className="size-4 shrink-0" />}
       </div>
@@ -97,12 +97,12 @@ function MetricCard({
 /* ── Percentile Card ── */
 function PercentileCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3.5 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
-      <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-zinc-400">
+    <div className="rounded-xl bg-card p-4 shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
         <span>{label}</span>
-        <Gauge className="size-4 shrink-0 text-blue-500" />
+        <Gauge className="size-4 shrink-0 text-primary" />
       </div>
-      <div className="mt-1.5 text-lg font-bold text-gray-900 dark:text-gray-100">
+      <div className="mt-1.5 text-lg font-semibold text-foreground tabular-nums">
         {formatLatency(value)}
       </div>
     </div>
@@ -160,13 +160,13 @@ function UptimeBarChart({ checks }: { checks: CheckData[] }) {
         })}
       </div>
       <div className="mt-3 flex items-center justify-center gap-4">
-        <span className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <span className="inline-block size-2.5 rounded-[2px] bg-emerald-500" /> Success
         </span>
-        <span className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <span className="inline-block size-2.5 rounded-[2px] bg-red-500" /> Error
         </span>
-        <span className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <span className="inline-block size-2.5 rounded-[2px] bg-amber-500" /> Degraded
         </span>
       </div>
@@ -176,7 +176,7 @@ function UptimeBarChart({ checks }: { checks: CheckData[] }) {
 
 /* ── Interactive Multi-Phase Stacked Latency Chart ── */
 const PHASES = [
-  { key: "dns", label: "DNS", color: "#2563eb", ratio: 0.15 },
+  { key: "dns", label: "DNS", color: "#5b5bd6", ratio: 0.15 },
   { key: "connect", label: "Connect", color: "#10b981", ratio: 0.10 },
   { key: "tls", label: "TLS", color: "#f59e0b", ratio: 0.12 },
   { key: "ttfb", label: "TTFB", color: "#8b5cf6", ratio: 0.48 },
@@ -289,7 +289,7 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
 
   if (!pointsData || pointsData.length < 2) {
     return (
-      <div className="py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="py-12 text-center text-sm text-muted-foreground">
         Not enough latency check data recorded yet.
       </div>
     );
@@ -365,7 +365,7 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
   return (
     <div className="space-y-4">
       {/* Controls Bar above Chart */}
-      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-foreground">
         <span>The</span>
         <div className="w-[85px]">
           <Select value={quantile} onValueChange={setQuantile}>
@@ -406,13 +406,13 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoverIndex(null)}
-        className="relative rounded-lg border border-gray-200 bg-white p-4 dark:border-[#2a2a2a] dark:bg-[#141414]"
+        className="relative rounded-xl bg-card p-4 shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]"
       >
         {/* Y-Axis Labels */}
-        <div className="absolute right-4 top-3 text-[11px] font-medium text-gray-400 dark:text-gray-500">
+        <div className="absolute right-4 top-3 text-[11px] font-medium text-text-soft">
           {formatLatency(maxLatency)}
         </div>
-        <div className="absolute right-4 bottom-10 text-[11px] font-medium text-gray-400 dark:text-gray-500">
+        <div className="absolute bottom-10 right-4 text-[11px] font-medium text-text-soft">
           0ms
         </div>
 
@@ -428,14 +428,14 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
           <path d={buildAreaPath((p) => p.c4, (p) => p.c3)} fill="#8b5cf6" fillOpacity="0.35" />
           <path d={buildAreaPath((p) => p.c3, (p) => p.c2)} fill="#f59e0b" fillOpacity="0.4" />
           <path d={buildAreaPath((p) => p.c2, (p) => p.c1)} fill="#10b981" fillOpacity="0.45" />
-          <path d={buildAreaPath((p) => p.c1)} fill="#1e3a8a" fillOpacity="0.75" />
+          <path d={buildAreaPath((p) => p.c1)} fill="#4646a8" fillOpacity="0.75" />
 
           {/* Layer Top Strokes (matching Image 1 boundary lines) */}
           <path d={buildLinePath((p) => p.c5)} fill="none" stroke="#ec4899" strokeWidth="1.75" />
           <path d={buildLinePath((p) => p.c4)} fill="none" stroke="#8b5cf6" strokeWidth="1.75" />
           <path d={buildLinePath((p) => p.c3)} fill="none" stroke="#f59e0b" strokeWidth="1.75" />
           <path d={buildLinePath((p) => p.c2)} fill="none" stroke="#10b981" strokeWidth="1.75" />
-          <path d={buildLinePath((p) => p.c1)} fill="none" stroke="#3b82f6" strokeWidth="1.75" />
+          <path d={buildLinePath((p) => p.c1)} fill="none" stroke="#6868df" strokeWidth="1.75" />
 
           {/* Crosshair indicator line */}
           {activePoint && (
@@ -452,7 +452,7 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
         </svg>
 
         {/* X-Axis Ticks */}
-        <div className="relative mt-2 flex h-5 w-full items-center text-[10px] text-gray-500 dark:text-gray-400">
+        <div className="relative mt-2 flex h-5 w-full items-center text-[10px] text-muted-foreground">
           {xAxisTicks.map((t, idx) => {
             const isFirst = idx === 0;
             const isLast = idx === xAxisTicks.length - 1;
@@ -492,7 +492,7 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-[2px] bg-[#2563eb]" /> DNS
+                  <span className="size-2.5 rounded-[2px] bg-[#5b5bd6]" /> DNS
                 </span>
                 <span className="font-semibold">{activePoint.dns} <span className="text-[10px] font-normal text-gray-400">ms</span></span>
               </div>
@@ -532,9 +532,9 @@ function MultiPhaseLatencyChart({ checks }: { checks: CheckData[] }) {
         )}
 
         {/* Legend */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-5 pt-2 border-t border-gray-100 dark:border-[#222]">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-5 border-t border-border/70 pt-2">
           {PHASES.map((p) => (
-            <span key={p.key} className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300">
+            <span key={p.key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <span className="size-2.5 rounded-[2px]" style={{ backgroundColor: p.color }} />
               {p.label}
             </span>
@@ -564,10 +564,10 @@ function RegionSummary({ checks, regions }: { checks: CheckData[]; regions: stri
   if (regionData.length === 0) return null;
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-[#2a2a2a]">
+    <div className="overflow-hidden rounded-xl shadow-[0_0_0_1px_var(--border)]">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]">
+          <tr className="border-b border-border bg-surface-sunken">
             <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Region</th>
             <th className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Checks</th>
             <th className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">P50</th>
@@ -577,12 +577,12 @@ function RegionSummary({ checks, regions }: { checks: CheckData[]; regions: stri
         </thead>
         <tbody>
           {regionData.map((r) => (
-            <tr key={r.region} className="border-b border-gray-100 last:border-0 dark:border-[#222]">
-              <td className="px-4 py-2.5 font-medium text-gray-900 dark:text-gray-50">{regionLabel(r.region)}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums text-gray-500 dark:text-gray-400">{r.count}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-gray-900 dark:text-gray-50">{formatLatency(r.p50)}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-gray-900 dark:text-gray-50">{formatLatency(r.p90)}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-gray-900 dark:text-gray-50">{formatLatency(r.p99)}</td>
+            <tr key={r.region} className="border-b border-border/70 last:border-0">
+              <td className="px-4 py-2.5 font-medium text-foreground">{regionLabel(r.region)}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums text-muted-foreground">{r.count}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-foreground">{formatLatency(r.p50)}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-foreground">{formatLatency(r.p90)}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-foreground">{formatLatency(r.p99)}</td>
             </tr>
           ))}
         </tbody>
@@ -648,13 +648,13 @@ export function OverviewTab({ checks, regions }: OverviewTabProps) {
           label="Requests"
           value={stats.total}
           icon={Pulse}
-          valueColorClass="text-gray-900 dark:text-gray-100"
+          valueColorClass="text-foreground"
         />
         <MetricCard
           label="Last Checked"
           value={stats.lastChecked ? relativeTime(stats.lastChecked) : "—"}
           icon={Clock}
-          valueColorClass="text-gray-900 dark:text-gray-100"
+          valueColorClass="text-foreground"
         />
       </div>
 
@@ -669,8 +669,8 @@ export function OverviewTab({ checks, regions }: OverviewTabProps) {
 
       {/* Uptime bar chart */}
       <section>
-        <h3 className="text-base font-medium text-gray-900 dark:text-gray-50">Uptime</h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h3 className="text-base font-semibold text-foreground">Uptime</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           Uptime across all selected regions — last 24 hours
         </p>
         <div className="mt-4">
@@ -680,8 +680,8 @@ export function OverviewTab({ checks, regions }: OverviewTabProps) {
 
       {/* Multi-Phase Interactive Latency Chart */}
       <section>
-        <h3 className="text-base font-medium text-gray-900 dark:text-gray-50">Latency</h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h3 className="text-base font-semibold text-foreground">Latency</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           Response time across all the regions
         </p>
         <div className="mt-4">
@@ -691,8 +691,8 @@ export function OverviewTab({ checks, regions }: OverviewTabProps) {
 
       {/* Region summary table */}
       <section>
-        <h3 className="text-base font-medium text-gray-900 dark:text-gray-50">Regions</h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h3 className="text-base font-semibold text-foreground">Regions</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           Every selected region&apos;s latency summary
         </p>
         <div className="mt-4">

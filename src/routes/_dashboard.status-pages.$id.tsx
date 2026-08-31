@@ -66,17 +66,17 @@ function EditStatusPage() {
   }
 
   if (loading) return <ListSkeleton count={3} />;
-  if (!page) return <p className="text-sm text-gray-500 dark:text-gray-400">Not found</p>;
+  if (!page) return <p className="text-sm text-muted-foreground">Not found</p>;
 
   return (
     <div className="mx-auto max-w-lg">
       <Card className="p-6 sm:p-8">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
+            <h2 className="text-xl font-semibold tracking-[-0.02em] text-foreground">
               Edit status page
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-muted-foreground">
               Update the public identity, URL slug, and default theme
             </p>
           </div>
@@ -89,19 +89,19 @@ function EditStatusPage() {
 
         <div className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
+            <Label htmlFor="name">Name</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="slug" className="text-gray-700 dark:text-gray-300">Slug</Label>
+            <Label htmlFor="slug">Slug</Label>
             <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="logoUrl" className="text-gray-700 dark:text-gray-300">Logo URL</Label>
+            <Label htmlFor="logoUrl">Logo URL</Label>
             <Input id="logoUrl" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://example.com/logo.png" className="font-sans" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="defaultTheme" className="text-gray-700 dark:text-gray-300">Default theme</Label>
+            <Label htmlFor="defaultTheme">Default theme</Label>
             <Select value={defaultTheme} onValueChange={(value) => setDefaultTheme(value as "light" | "dark")}>
               <SelectTrigger id="defaultTheme">
                 <SelectValue />

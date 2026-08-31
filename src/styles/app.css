@@ -47,6 +47,13 @@
   --warning-light: #fef3c7;
   --error: #dc2626;
   --error-light: #fee2e2;
+  --primary-hover: #424b57;
+  --primary-muted: #f0f1f3;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f0f1f3;
+  --control: #ffffff;
+  --control-hover: #f7f7f8;
+  --ring: #6b7280;
 }
 
 .dark {
@@ -78,10 +85,84 @@
   --warning-light: #451a03;
   --error: #ef4444;
   --error-light: #450a0a;
+  --primary-hover: #64707f;
+  --primary-muted: #23272d;
+  --surface-raised: #202020;
+  --surface-sunken: #0d0d0d;
+  --control: #121212;
+  --control-hover: #202020;
+  --ring: #9ca3af;
+}
+
+/* Auth and public pages retain the incumbent Switzer system. Dashboard tokens are
+   intentionally scoped so the operations product can evolve independently. */
+.dashboard-shell {
+  --shell: #f5f5f8;
+  --background: #fafafd;
+  --foreground: #171821;
+  --card: #ffffff;
+  --card-foreground: #171821;
+  --primary: #5b5bd6;
+  --primary-hover: #4f4fc4;
+  --primary-foreground: #ffffff;
+  --primary-muted: #eeeeff;
+  --muted: #f0f0f5;
+  --muted-foreground: #707281;
+  --border: #e2e2e9;
+  --bg-sub: #dedee7;
+  --bg-weak: #f0f0f5;
+  --bg-white: #ffffff;
+  --text-strong: #171821;
+  --text-soft: #999ba8;
+  --text-sub: #707281;
+  --text-disabled: #a7a9b4;
+  --bg-soft: #e8e8ef;
+  --stroke-sub: #d2d2dc;
+  --stroke-soft: #e8e8ee;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f1f1f6;
+  --control: #f7f7fa;
+  --control-hover: #f0f0f5;
+  --ring: #5b5bd6;
+  --info: #5b5bd6;
+  --info-light: #eeeeff;
+}
+
+.dark .dashboard-shell {
+  --shell: #0b0c10;
+  --background: #0e0f14;
+  --foreground: #f1f1f4;
+  --card: #14151b;
+  --card-foreground: #f1f1f4;
+  --primary: #6868df;
+  --primary-hover: #7777ec;
+  --primary-foreground: #ffffff;
+  --primary-muted: #24243e;
+  --muted: #1b1c24;
+  --muted-foreground: #9698a6;
+  --border: #292a34;
+  --bg-sub: #30313c;
+  --bg-weak: #1b1c24;
+  --bg-white: #14151b;
+  --text-strong: #f1f1f4;
+  --text-soft: #6f7180;
+  --text-sub: #9698a6;
+  --text-disabled: #5f616e;
+  --bg-soft: #23242d;
+  --stroke-sub: #353641;
+  --stroke-soft: #252630;
+  --surface-raised: #191a21;
+  --surface-sunken: #0a0b0f;
+  --control: #101116;
+  --control-hover: #1a1b22;
+  --ring: #7777ec;
+  --info: #7777ec;
+  --info-light: #24243e;
 }
 
 @theme {
   --font-sans: "Switzer", ui-sans-serif, system-ui, sans-serif;
+  --font-dashboard: "Geist Variable", "Switzer", ui-sans-serif, system-ui, sans-serif;
   --color-shell: var(--shell);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -110,11 +191,71 @@
   --color-warning-light: var(--warning-light);
   --color-error: var(--error);
   --color-error-light: var(--error-light);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-control: var(--control);
+  --color-control-hover: var(--control-hover);
+  --color-ring: var(--ring);
 }
 
 @layer base {
   html {
     @apply font-sans antialiased;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+}
+
+.dashboard-shell {
+  font-family: var(--font-dashboard);
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+
+.dashboard-shell ::selection {
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+  color: var(--foreground);
+}
+
+.dashboard-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--stroke-sub) transparent;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--stroke-sub);
+  background-clip: padding-box;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-soft);
+  background-clip: padding-box;
+}
+
+.dashboard-shell :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-shell *,
+  .dashboard-shell *::before,
+  .dashboard-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 

@@ -29,8 +29,8 @@ type Variant = keyof typeof variants;
 type Color = keyof (typeof variants)["filled"];
 
 const sizes = {
-  sm: "h-4 gap-1 px-1.5 text-[11px] uppercase tracking-wider font-medium",
-  md: "h-5 gap-1.5 px-2 text-xs font-medium",
+  sm: "h-5 gap-1 px-2 text-[10px] uppercase tracking-[0.06em] font-semibold",
+  md: "h-6 gap-1.5 px-2.5 text-xs font-medium",
 };
 
 export function Badge({
@@ -49,7 +49,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center rounded-full leading-none whitespace-nowrap",
+        "inline-flex items-center justify-center rounded-md leading-none whitespace-nowrap",
         variants[variant][color] || variants.light.gray,
         sizes[size],
         className,

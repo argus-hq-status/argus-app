@@ -57,27 +57,27 @@ export function TimelineTable({ checks }: { checks: CheckData[] }) {
 
   if (events.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white px-4 py-12 text-center dark:border-[#2a2a2a] dark:bg-[#141414]">
-        <p className="text-sm text-gray-500 dark:text-gray-400">No check events recorded yet.</p>
+      <div className="rounded-xl bg-card px-4 py-12 text-center shadow-[0_0_0_1px_var(--border)]">
+        <p className="text-sm text-muted-foreground">No check events recorded yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-[#2a2a2a]">
+    <div className="dashboard-scrollbar overflow-x-auto rounded-xl shadow-[0_0_0_1px_var(--border)]">
       {/* Table header */}
-      <div className="grid grid-cols-[180px_1fr_200px] border-b border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-[#2a2a2a] dark:bg-[#0d0d0d]">
+      <div className="grid min-w-[640px] grid-cols-[180px_1fr_200px] border-b border-border bg-surface-sunken px-4 py-2.5">
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Action</span>
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Information</span>
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Timestamp</span>
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[480px] overflow-y-auto bg-white dark:bg-[#141414]">
+      <div className="dashboard-scrollbar min-w-[640px] max-h-[480px] overflow-y-auto bg-card">
         {events.map((ev) => (
           <div
             key={ev.id}
-            className="grid grid-cols-[180px_1fr_200px] items-center border-b border-gray-100 px-4 py-3 last:border-0 dark:border-[#222]"
+            className="grid grid-cols-[180px_1fr_200px] items-center border-b border-border/70 px-4 py-3 last:border-0"
           >
             {/* Action */}
             <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export function TimelineTable({ checks }: { checks: CheckData[] }) {
               ) : (
                 <MinusCircle className="size-4 shrink-0 text-red-500" weight="fill" />
               )}
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
+              <span className="text-sm font-medium text-foreground">
                 {ev.action}
               </span>
             </div>
@@ -96,7 +96,7 @@ export function TimelineTable({ checks }: { checks: CheckData[] }) {
               <InlineBadge className="bg-gray-50 text-gray-600 ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700">
                 region
               </InlineBadge>
-              <span className="font-sans text-xs text-gray-600 dark:text-gray-300">
+              <span className="text-xs text-muted-foreground">
                 {regionLabel(ev.region)}
               </span>
               {ev.statusCode != null && (
@@ -104,7 +104,7 @@ export function TimelineTable({ checks }: { checks: CheckData[] }) {
                   <InlineBadge className="bg-gray-50 text-gray-600 ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700">
                     status
                   </InlineBadge>
-                  <span className="font-sans text-xs font-medium text-gray-900 dark:text-gray-50">
+                  <span className="text-xs font-medium text-foreground">
                     {ev.statusCode}
                   </span>
                 </>
@@ -112,13 +112,13 @@ export function TimelineTable({ checks }: { checks: CheckData[] }) {
               <InlineBadge className="bg-gray-50 text-gray-600 ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700">
                 latency
               </InlineBadge>
-              <span className="font-sans text-xs font-medium text-gray-900 dark:text-gray-50">
+              <span className="text-xs font-medium text-foreground">
                 {formatLatency(ev.latency)}
               </span>
             </div>
 
             {/* Timestamp */}
-            <span className="font-sans text-xs tabular-nums text-gray-500 dark:text-gray-400">
+            <span className="text-xs tabular-nums text-muted-foreground">
               {formatTimestamp(ev.timestamp)}
             </span>
           </div>

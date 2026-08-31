@@ -125,7 +125,7 @@ function MonitorDetailPage() {
     return (
       <Card className="flex flex-col items-center gap-3 px-6 py-12">
         <WarningCircle className="size-8 text-error" weight="regular" />
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{error ?? "Not found"}</p>
+        <p className="text-sm font-medium text-foreground">{error ?? "Not found"}</p>
         <Link to="/monitors" className="text-sm text-primary hover:underline">
           ← Back to monitors
         </Link>
@@ -146,7 +146,7 @@ function MonitorDetailPage() {
         <Link
           to="/incidents/$id"
           params={{ id: inc.id }}
-          className="font-medium text-gray-900 hover:text-primary transition dark:text-gray-50"
+          className="font-medium text-foreground transition-colors duration-150 hover:text-primary"
         >
           {inc.title}
         </Link>
@@ -167,14 +167,14 @@ function MonitorDetailPage() {
       header: "Started",
       sortable: true,
       sortValue: (inc) => new Date(inc.startedAt).getTime(),
-      cellClassName: "text-gray-500 dark:text-gray-400",
+      cellClassName: "text-muted-foreground",
       cell: (inc) => formatDate(inc.startedAt),
     },
     {
       id: "resolvedAt",
       header: "Resolved",
       cell: (inc) => (
-        <span className="text-gray-500 dark:text-gray-400">
+        <span className="text-muted-foreground">
           {inc.resolvedAt ? formatDate(inc.resolvedAt) : "—"}
         </span>
       ),
@@ -186,7 +186,7 @@ function MonitorDetailPage() {
       {/* Back link */}
       <Link
         to="/monitors"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
       >
         <ArrowLeft className="size-3.5" weight="bold" />
         Monitors
@@ -196,7 +196,7 @@ function MonitorDetailPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-50">
+            <h1 className="text-xl font-semibold tracking-[-0.02em] text-foreground">
               {monitor.name}
             </h1>
             <Badge variant={badge.variant} color={badge.color} size="sm">
@@ -206,12 +206,12 @@ function MonitorDetailPage() {
               <Badge variant="stroke" color="gray" size="sm">Paused</Badge>
             )}
           </div>
-          <p className="flex items-center gap-2 font-sans text-sm text-gray-500 dark:text-gray-400">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
             {monitor.url}
             <button
               type="button"
               onClick={() => navigator.clipboard.writeText(monitor.url)}
-              className="text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+              className="flex size-7 items-center justify-center rounded-md text-text-soft transition-colors duration-150 hover:bg-muted hover:text-foreground"
               aria-label="Copy URL"
             >
               <Copy className="size-3.5" />
@@ -254,8 +254,8 @@ function MonitorDetailPage() {
         <TabsContent value="logs">
           <div className="space-y-4">
             <div>
-              <h3 className="text-base font-medium text-gray-900 dark:text-gray-50">Timeline</h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <h3 className="text-base font-semibold text-foreground">Timeline</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 What happened to your monitor over the last 30 days
               </p>
             </div>

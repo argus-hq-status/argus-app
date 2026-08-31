@@ -40,7 +40,7 @@ interface UpdateData {
   createdAt: string;
 }
 
-const statCardClass = "rounded-xl border border-gray-200 bg-white p-4 dark:border-[#2a2a2a] dark:bg-[#1a1a1a]";
+const statCardClass = "rounded-xl bg-card p-4 shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]";
 
 export const Route = createFileRoute("/_dashboard/incidents/$id")({
   component: IncidentDetailPage,
@@ -117,7 +117,7 @@ function IncidentDetailPage() {
     return (
       <Card className="flex flex-col items-center gap-3 px-6 py-12">
         <WarningCircle className="size-8 text-error" weight="regular" />
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{error ?? "Not found"}</p>
+        <p className="text-sm font-medium text-foreground">{error ?? "Not found"}</p>
       </Card>
     );
   }
@@ -128,7 +128,7 @@ function IncidentDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-gray-50">
+        <h1 className="text-2xl font-semibold tracking-[-0.025em] text-foreground">
           {incident.title}
         </h1>
         <div className="flex items-center gap-2">
@@ -143,27 +143,27 @@ function IncidentDetailPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className={statCardClass}>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
+          <p className="text-xs text-muted-foreground">Status</p>
           <div className="mt-0.5">
             <Badge variant="light" color={cfg.color}>{cfg.label}</Badge>
           </div>
         </div>
         <div className={statCardClass}>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Type</p>
-          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50 capitalize">
+          <p className="text-xs text-muted-foreground">Type</p>
+          <p className="mt-0.5 text-sm font-medium text-foreground capitalize">
             {incident.incidentType}
           </p>
         </div>
         <div className={statCardClass}>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Started</p>
-          <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+          <p className="text-xs text-muted-foreground">Started</p>
+          <p className="mt-0.5 text-sm font-medium text-foreground">
             {new Date(incident.startedAt).toLocaleString()}
           </p>
         </div>
         {incident.resolvedAt && (
           <div className={statCardClass}>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Resolved</p>
-            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+            <p className="text-xs text-muted-foreground">Resolved</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">
               {new Date(incident.resolvedAt).toLocaleString()}
             </p>
           </div>
@@ -173,14 +173,14 @@ function IncidentDetailPage() {
       {isScheduled && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
           <div className={statCardClass}>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Scheduled Start</p>
-            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+            <p className="text-xs text-muted-foreground">Scheduled Start</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">
               {incident.scheduledStartAt ? new Date(incident.scheduledStartAt).toLocaleString() : "-"}
             </p>
           </div>
           <div className={statCardClass}>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Scheduled End</p>
-            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-50">
+            <p className="text-xs text-muted-foreground">Scheduled End</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">
               {incident.scheduledEndAt ? new Date(incident.scheduledEndAt).toLocaleString() : "-"}
             </p>
           </div>
@@ -188,17 +188,17 @@ function IncidentDetailPage() {
       )}
 
       <section>
-        <h2 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-50">Timeline</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">Timeline</h2>
         {updates.length === 0 ? (
           <Card className="flex items-center justify-center border-dashed px-6 py-10">
             <div className="text-center">
-              <WarningCircle className="mx-auto mb-2 size-6 text-gray-400 dark:text-gray-500" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">No updates yet.</p>
+              <WarningCircle className="mx-auto mb-2 size-6 text-text-soft" />
+              <p className="text-sm text-muted-foreground">No updates yet.</p>
             </div>
           </Card>
         ) : (
           <div className="relative ml-3 space-y-0">
-            <div className="absolute bottom-0 left-[7px] top-0 w-px bg-gray-200 dark:bg-[#2a2a2a]" />
+            <div className="absolute bottom-0 left-[7px] top-0 w-px bg-border" />
             {updates.map((u) => {
               const uc = statusConfig[u.status] ?? { color: "gray" as const, label: u.status };
               return (
@@ -213,11 +213,11 @@ function IncidentDetailPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Badge variant="light" color={uc.color} size="sm">{uc.label}</Badge>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(u.createdAt).toLocaleString()}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-50">{u.message}</p>
+                    <p className="mt-1 text-sm text-foreground">{u.message}</p>
                   </div>
                 </div>
               );
@@ -230,10 +230,10 @@ function IncidentDetailPage() {
         <Drawer.Content>
           <Drawer.Header>
             <div>
-              <Drawer.Title className="text-sm font-medium text-gray-900 dark:text-gray-50">
+              <Drawer.Title className="text-sm font-semibold text-foreground">
                 Add Update
               </Drawer.Title>
-              <Drawer.Description className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              <Drawer.Description className="mt-0.5 text-xs text-muted-foreground">
                 Post a status update for {incident.title}
               </Drawer.Description>
             </div>
@@ -242,7 +242,7 @@ function IncidentDetailPage() {
           <Drawer.Body>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">Status</Label>
+                <Label htmlFor="status">Status</Label>
                 <Select value={newStatus} onValueChange={setNewStatus}>
                   <SelectTrigger id="status">
                     <SelectValue placeholder="Select status" />
@@ -266,7 +266,7 @@ function IncidentDetailPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">Message</Label>
+                <Label htmlFor="message">Message</Label>
                 <Textarea
                   id="message"
                   value={message}

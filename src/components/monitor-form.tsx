@@ -46,10 +46,10 @@ interface MonitorFormProps {
 
 function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
   return (
-    <section className="rounded-lg border border-gray-200 bg-[#fafafa] dark:border-[#2a2a2a] dark:bg-[#141414] overflow-hidden">
+    <section className="overflow-hidden rounded-xl bg-card shadow-[0_0_0_1px_var(--border),0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="p-6">
-        <h2 className="text-base font-semibold text-gray-900 dark:text-gray-50">{title}</h2>
-        {description && <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>}
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+        {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
         <div className="mt-6 space-y-6">
           {children}
         </div>
@@ -106,18 +106,18 @@ export function MonitorForm({
               placeholder="Test Monitor"
               required
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-muted-foreground">
               Internal name for your monitor. This will be used to identify the monitor in the dashboard.
             </p>
           </div>
           <div className="flex items-center gap-3 pt-8">
-            <span className="text-sm font-semibold dark:text-gray-200">Active</span>
+            <span className="text-sm font-semibold text-foreground">Active</span>
             <button
               type="button"
               onClick={() => update({ isActive: !data.isActive })}
               className={cn(
                 "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                data.isActive ? "bg-primary" : "bg-gray-200 dark:bg-gray-700"
+                data.isActive ? "bg-primary" : "bg-muted"
               )}
             >
               <span
@@ -143,7 +143,7 @@ export function MonitorForm({
                   "flex-1 rounded-lg border py-2.5 text-sm font-medium transition-colors",
                   data.monitorType === t
                     ? "border-primary bg-primary/10 text-primary dark:bg-primary/20"
-                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-gray-300 dark:hover:bg-[#222]"
+                    : "border-border bg-control text-muted-foreground hover:bg-control-hover hover:text-foreground"
                 )}
               >
                 {t}
@@ -271,8 +271,8 @@ export function MonitorForm({
 
           <div className="space-y-2">
             {data.assertions.map((a, i) => (
-              <div key={i} className="flex gap-2 items-center bg-gray-50 p-2 rounded-lg border border-gray-200 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
-                <div className="w-24 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <div key={i} className="flex items-center gap-2 rounded-lg bg-surface-sunken p-2 shadow-[inset_0_0_0_1px_var(--border)]">
+                <div className="w-24 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                   {a.type}
                 </div>
                 {a.type === "status" && (
@@ -327,7 +327,7 @@ export function MonitorForm({
               </div>
             ))}
             {data.assertions.length === 0 && (
-              <p className="text-sm text-gray-500 italic">No assertions added. The monitor will default to checking for 200 OK.</p>
+              <p className="text-sm italic text-muted-foreground">No assertions added. The monitor will default to checking for 200 OK.</p>
             )}
           </div>
         </div>
@@ -347,7 +347,7 @@ export function MonitorForm({
               onChange={(e) => update({ degradedMs: Number(e.target.value) })}
               className="font-mono"
             />
-            <p className="text-xs text-gray-500">Time after which the endpoint is considered degraded.</p>
+            <p className="text-xs text-muted-foreground">Time after which the endpoint is considered degraded.</p>
           </div>
           <div className="space-y-2">
             <Label>Timeout (in ms.)</Label>
@@ -357,7 +357,7 @@ export function MonitorForm({
               onChange={(e) => update({ timeoutMs: Number(e.target.value) })}
               className="font-mono"
             />
-            <p className="text-xs text-gray-500">Max. time allowed for request to complete.</p>
+            <p className="text-xs text-muted-foreground">Max. time allowed for request to complete.</p>
           </div>
         </div>
       </Section>
@@ -370,14 +370,14 @@ export function MonitorForm({
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
             {data.tags.map(t => (
-              <span key={t} className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1 text-sm font-medium text-gray-900 dark:bg-gray-800 dark:text-gray-200">
+              <span key={t} className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2.5 py-1 text-sm font-medium text-foreground">
                 {t}
                 <button type="button" onClick={() => update({ tags: data.tags.filter(x => x !== t) })} className="hover:text-red-500">
                   &times;
                 </button>
               </span>
             ))}
-            {data.tags.length === 0 && <span className="text-sm text-gray-500">No tags selected</span>}
+            {data.tags.length === 0 && <span className="text-sm text-muted-foreground">No tags selected</span>}
           </div>
           <div className="flex gap-2 max-w-sm">
             <Input
@@ -433,7 +433,7 @@ export function MonitorForm({
                       "flex-shrink-0 rounded-full px-4 py-1 text-sm font-medium transition-colors",
                       data.intervalSeconds === s
                         ? "bg-primary text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        : "bg-muted text-muted-foreground hover:bg-control-hover hover:text-foreground"
                     )}
                   >
                     {label}
@@ -451,12 +451,12 @@ export function MonitorForm({
             {/* Group regions by continent */}
             {Array.from(new Set(REGIONS.map(r => r.continent))).map(continent => (
               <div key={continent} className="space-y-2">
-                <div className="flex items-center justify-between text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="flex items-center justify-between text-sm font-medium text-foreground">
                   <span>{continent}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {REGIONS.filter(r => r.continent === continent).map(r => (
-                    <label key={r.id} className="flex items-center gap-2.5 cursor-pointer rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors dark:border-[#2a2a2a] dark:hover:border-gray-600">
+                    <label key={r.id} className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border p-3 transition-colors duration-150 hover:border-stroke-sub hover:bg-muted/50">
                       <input
                         type="checkbox"
                         checked={data.regions.includes(r.id)}
@@ -469,7 +469,7 @@ export function MonitorForm({
                         }}
                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">{r.label}</span>
+                      <span className="text-sm text-foreground">{r.label}</span>
                     </label>
                   ))}
                 </div>
@@ -479,7 +479,7 @@ export function MonitorForm({
         </div>
       </Section>
 
-      <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-[#2a2a2a]">
+      <div className="flex items-center justify-between border-t border-border pt-4">
         <Button type="submit" loading={loading} icon={FloppyDisk} size="lg">
           {submitLabel}
         </Button>

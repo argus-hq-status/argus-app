@@ -36,8 +36,8 @@ const statusIconConfig: Record<string, { icon: React.ReactNode; bg: string; text
   },
   in_progress: {
     icon: <Clock weight="bold" className="size-3.5" />,
-    bg: "bg-blue-500/20 border-blue-500/40",
-    text: "text-blue-400",
+    bg: "bg-info/20 border-info/40",
+    text: "text-info",
     label: "In progress",
   },
   investigating: {

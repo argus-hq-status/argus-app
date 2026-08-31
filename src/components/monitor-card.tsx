@@ -102,13 +102,13 @@ export function MonitorCard({
               />
               <Tooltip 
                 contentStyle={{ backgroundColor: isLight ? '#ffffff' : '#161b22', borderColor: isLight ? '#e5e7eb' : '#30363d', borderRadius: '8px' }}
-                itemStyle={{ color: '#2563eb' }}
+                itemStyle={{ color: '#5b5bd6' }}
                 labelStyle={{ color: isLight ? '#6b7280' : '#8b949e' }}
               />
               <Line 
                 type="monotone" 
                 dataKey="value" 
-                stroke="#0080ff" 
+                stroke="#5b5bd6"
                 strokeWidth={1.5} 
                 dot={false}
                 isAnimationActive={false}
